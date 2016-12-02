@@ -29,6 +29,7 @@ git push -u origin master
 MeteorKL 修改readme.md
 MeteorKL 大概计划
 MeteorKL go后端简单搭建
+MeteorKL 重命名 README.md 为 readme.md
 
 # 分工
 ```
