@@ -1,4 +1,5 @@
 # CourseWeb
+http://11.juanix.cn:2333/
 
 # 计划
 12.4 原型全部完成
@@ -27,6 +28,7 @@ git push -u origin master
 ## 12.2
 MeteorKL 修改readme.md
 MeteorKL 大概计划
+MeteorKL go后端简单搭建
 
 # 分工
 ```
