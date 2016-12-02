@@ -1,5 +1,10 @@
 # CourseWeb
 
+# 计划
+12.4 原型全部完成
+
+12.25 全部项目完成
+
 # 简单的使用方法
 ## 初始化
 本地新建文件夹 CourseWeb  
@@ -21,8 +26,10 @@ git push -u origin master
 ```
 ## 12.2
 MeteorKL 修改readme.md
+MeteorKL 大概计划
 
 # 分工
+```
 后端 徐亮  
 mogodb  
 go  
@@ -90,5 +97,5 @@ post请求
 		老师－发布作业  
 			设置作业类型，编辑历史作业，设定截止时期  
 		老师－设置权限  
-	
+```
 
