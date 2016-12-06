@@ -6,13 +6,11 @@ import (
 )
 
 func main() {
+	// addStudents()
 	routerInit()
-
-	// http
+	go HttpGet()
+	go HttpPost()
 	if err := http.ListenAndServe(":2333", nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
-	// if err := http.ListenAndServeTLS(":8080", "server.pem", "server.key", nil); err != nil {
-	// 	log.Fatal("ListenAndServe:", err)
-	// }
 }
