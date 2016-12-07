@@ -6,10 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
-
-	"labix.org/v2/mgo/bson"
+	"utilKL"
 
 	"github.com/gorilla/sessions"
 )
@@ -23,19 +21,6 @@ func renderHTML(w http.ResponseWriter, file string, data interface{}) {
 }
 
 var sessionStore = sessions.NewCookieStore([]byte("3140102431"))
-
-func loginCheck(collection string, sid string, password string) (bool, string) {
-	id, _ := strconv.Atoi(sid)
-	person, err := mgoFind(collection, bson.M{
-		"_id":      id,
-		"password": password,
-	}, 0, 0)
-	log.Println(person)
-	if err != nil {
-		return false, ""
-	}
-	return true, person["name"].(string)
-}
 
 func routerInit() {
 	// files
@@ -81,18 +66,19 @@ func routerInit() {
 		vaild, Name := loginCheck(Type, ID, Password)
 		log.Println(Name)
 		if vaild {
-			session, err := sessionStore.Get(r, "sessionID")
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+			// session, err := sessionStore.Get(r, "sessionID")
+			session := utilKL.GetSession(r, w, "sessionID")
+			// if err != nil {
+			// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+			// 	return
+			// }
 			if session.IsNew {
 				log.Println("登陆成功")
 				session.Values["ID"] = ID
 				session.Values["Name"] = Name
 				session.Values["Password"] = Password
 				session.Values["Type"] = Type
-				session.Save(r, w)
+				// session.Save(r, w)
 				w.Write([]byte("登陆成功\n欢迎," + Name + "同学\n"))
 			} else {
 				w.Write([]byte("您已经登陆了," + Name + "同学\n"))
@@ -100,6 +86,57 @@ func routerInit() {
 		} else {
 			w.Write([]byte("账号或密码错误"))
 		}
+	})
+
+	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		session := utilKL.GetSession(r, w, "sessionID")
+		session.Destory()
+		// session, err := sessionStore.Get(r, "sessionID")
+		// if err != nil {
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 	return
+		// }
+		// for key := range session.Values {
+		// 	delete(session.Values, key)
+		// }
+		// session.Save(r, w)
+		log.Println(session)
+		w.Write([]byte("注销成功"))
+	})
+
+	http.HandleFunc("/changePWD", func(w http.ResponseWriter, r *http.Request) {
+
+		fmt.Println("method:", r.Method) //获取请求的方法r.ParseForm()
+		ID := r.Form["ID"][0]
+		Type := r.Form["Type"][0]
+		if Type == "OldPassword" {
+			OldPassword := r.Form["OldPassword"][0]
+			vaild, _ := loginCheck(Type, ID, OldPassword)
+			if !vaild {
+				w.Write([]byte("旧密码错误"))
+				return
+			}
+		} else {
+			// Question := r.Form["Question"]
+			// Answer := r.Form["Answer"]
+		}
+		Password := r.Form["Password"][0]
+		for k, v := range r.Form {
+			fmt.Print("key:", k, "; ")
+			fmt.Println("val:", strings.Join(v, ""))
+		}
+		session, err := sessionStore.Get(r, "sessionID")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		for key := range session.Values {
+			delete(session.Values, key)
+		}
+		session.Values["Password"] = Password
+		session.Save(r, w)
+		log.Println(session)
+		w.Write([]byte("注销成功"))
 	})
 }
 

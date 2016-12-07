@@ -27,6 +27,7 @@ git push -u origin master
 ```
 ## 12.7
 MeteorKL 登录验证...  
+MeteorKL session  
 
 ## 12.2
 MeteorKL 修改readme.md  

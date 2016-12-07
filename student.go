@@ -8,8 +8,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"labix.org/v2/mgo/bson"
 )
 
 type Student struct {
@@ -40,19 +38,6 @@ func addStudent(sid string, name string) {
 	} else {
 		log.Println("success")
 	}
-}
-
-func loginStudent(sid string, password string) (bool, string) {
-	id, _ := strconv.Atoi(sid)
-	student, err := mgoFind("student", bson.M{
-		"_id":      id,
-		"password": password,
-	}, 0, 0)
-	log.Println(student)
-	if err != nil {
-		return false, ""
-	}
-	return true, student["name"].(string)
 }
 
 func addStudents() {
