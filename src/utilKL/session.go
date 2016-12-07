@@ -31,10 +31,32 @@ func NewSession() string {
 	return sessionID
 }
 
+func ExistSession(r *http.Request, cookieName string) bool {
+	c, err := r.Cookie(cookieName)
+	if err != nil {
+		return false
+	}
+	if _, ok := Sessions[c.Value]; ok {
+		return true
+	}
+	return false
+}
+
+func PeekSession(r *http.Request, cookieName string) *Session {
+	c, err := r.Cookie(cookieName)
+	if err != nil {
+		return nil
+	}
+	if s, ok := Sessions[c.Value]; ok {
+		s.IsNew = false
+		return &s
+	}
+	return nil
+}
+
 func GetSession(r *http.Request, w http.ResponseWriter, cookieName string) *Session {
 	c, err := r.Cookie(cookieName)
-	log.Println(c)
-	log.Println(err)
+	log.Println("cookie: ", c)
 	if err != nil {
 		log.Println("no cookies")
 		sessionID := NewSession()
@@ -81,64 +103,3 @@ func (s *Session) Destory() error {
 	delete(Sessions, s.ID)
 	return nil
 }
-
-// func GetSession(sessionId string, key string) (interface{}, error) {
-// 	data, ok := Session[sessionId]
-// 	if !ok {
-// 		return nil, errors.New("SessionId not found")
-// 	}
-// 	if data.UpdateTime+SESSION_EXPIRE_TIME < time.Now().Unix() {
-// 		delete(Session, sessionId)
-// 		return nil, errors.New("Session is expired")
-// 	}
-// 	value, ok := data.Values[key]
-// 	if !ok {
-// 		return nil, errors.New("error key")
-// 	}
-// 	data.UpdateTime = time.Now().Unix()
-// 	return value, nil
-// }
-
-// func SetSession(sessionId string, key string, value interface{}) error {
-// 	data, ok := Session[sessionId]
-// 	if !ok {
-// 		data = Session{
-// 			Values:     make(map[string]interface{}),
-// 			UpdateTime: time.Now().Unix(),
-// 		}
-// 		Session[sessionId] = data
-// 	}
-// 	data.Values[key] = value
-// 	data.UpdateTime = time.Now().Unix()
-// 	return nil
-// }
-
-// func DestorySession(sessionId string) error {
-// 	data, ok := Session[sessionId]
-// 	if !ok {
-// 		return errors.New("SessionId not found")
-// 	}
-// 	if data.UpdateTime+SESSION_EXPIRE_TIME < time.Now().Unix() {
-// 		delete(Session, sessionId)
-// 		return errors.New("Session is expired")
-// 	}
-// 	delete(Session, sessionId)
-// 	return nil
-// }
-
-// func getSessionBycookieName(r *http.Request, cookieName string, key string) (interface{}, error) {
-// 	c, err := r.Cookie(cookieName)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return GetSession(c.Value, key)
-// }
-
-// func createSessionBycookieName(r *http.Request, w http.ResponseWriter, cookieName string) (interface{}, error) {
-// 	sessionID := NewSession()
-// 	c := &http.Cookie{
-// 		Name:  cookieName,
-// 		Value: sessionID,
-// 	}
-// 	http.SetCookie(w, c)
-// }

@@ -30,29 +30,17 @@ func withCollection(collection string, query func(*mgo.Collection) (*mgo.ChangeI
 }
 
 func mgoFindAll(collection string, selector map[string]interface{}, skip int, limit int) (searchResults []map[string]interface{}, err error) {
-
 	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
-		var err error
-		if limit < 0 {
-			err = c.Find(selector).Skip(skip).All(&searchResults)
-		} else {
-			err = c.Find(selector).Skip(skip).Limit(limit).All(&searchResults)
-		}
+		err := c.Find(selector).All(&searchResults)
 		return nil, err
 	}
 	_, err = withCollection(collection, query)
 	return searchResults, err
 }
 
-func mgoFind(collection string, selector map[string]interface{}, skip int, limit int) (searchResults map[string]interface{}, err error) {
-
+func mgoFind(collection string, selector map[string]interface{}) (searchResults map[string]interface{}, err error) {
 	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
-		var err error
-		if limit < 0 {
-			err = c.Find(selector).Skip(skip).One(&searchResults)
-		} else {
-			err = c.Find(selector).Skip(skip).Limit(limit).One(&searchResults)
-		}
+		err := c.Find(selector).One(&searchResults)
 		return nil, err
 	}
 	_, err = withCollection(collection, query)
@@ -82,4 +70,13 @@ func mgoUpdateAll(collection string, selector interface{}, update interface{}) (
 		return info, err
 	}
 	return withCollection(collection, query)
+}
+
+func mgoUpdate(collection string, selector interface{}, update interface{}) error {
+	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		err := c.Update(selector, update)
+		return nil, err
+	}
+	_, err := withCollection(collection, query)
+	return err
 }

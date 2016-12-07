@@ -16,8 +16,3 @@ type Teacher struct {
 	StudentsCenteredEvaluation string // 教学质量评价
 	SecurityQuestions          []SecurityQuestion
 }
-
-type SecurityQuestion struct {
-	Question string
-	Answer   string
-}
