@@ -1,4 +1,4 @@
-package utilKL
+package koala
 
 import (
 	"errors"
@@ -19,7 +19,7 @@ type Session struct {
 var Sessions = make(map[string]Session)
 
 func NewSession() string {
-	sessionID := hashString(time.Now().Format(time.UnixDate))
+	sessionID := HashString(time.Now().Format(time.UnixDate))
 	s := Session{
 		ID:         sessionID,
 		Values:     make(map[string]interface{}),
