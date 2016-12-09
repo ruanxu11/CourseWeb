@@ -29,7 +29,7 @@ func withCollection(collection string, query func(*mgo.Collection) (*mgo.ChangeI
 	return query(c)
 }
 
-func mgoFindAll(collection string, selector map[string]interface{}, skip int, limit int) (searchResults []map[string]interface{}, err error) {
+func mgoFindAll(collection string, selector map[string]interface{}) (searchResults []map[string]interface{}, err error) {
 	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
 		err := c.Find(selector).All(&searchResults)
 		return nil, err
@@ -60,6 +60,14 @@ func mgoRemoveAll(collection string, selector interface{}) (info *mgo.ChangeInfo
 	query := func(c *mgo.Collection) (info *mgo.ChangeInfo, err error) {
 		info, err = c.RemoveAll(selector)
 		return info, err
+	}
+	return withCollection(collection, query)
+}
+
+func mgoRemove(collection string, selector interface{}) (info *mgo.ChangeInfo, err error) {
+	query := func(c *mgo.Collection) (info *mgo.ChangeInfo, err error) {
+		err = c.Remove(selector)
+		return nil, err
 	}
 	return withCollection(collection, query)
 }

@@ -2,26 +2,17 @@
 http://11.juanix.cn:2333/
 
 # 计划
-12.25 全部项目完成  
-
-# 后端已完成功能
-登录  
-修改密码  
-忘记密码  
-修改安全问题  
+12.10 - 12.20 先写react组件  
   
-## 12.8
-MeteorKL 尝试写了个router，修改密码，忘记密码，修改安全问题  
-
-## 12.7
-MeteorKL 登录验证...  
-MeteorKL 尝试写了个session  
-
-## 12.2
-MeteorKL 修改readme.md  
-MeteorKL 大概计划  
-MeteorKL go后端简单搭建  
-MeteorKL 重命名 README.md 为 readme.md  
+12.20 之后 组合组件，页面布局，前后端整合  
+  
+12.25 全部项目完成  
+  
+# 后端已完成功能
+登录/注销  
+修改密码,忘记密码,修改安全问题  
+添加老师,查看介绍,修改本人信息,添加课程  
+添加/删除教学班,修改课程介绍，课程大纲  
 
 # 分工
 ```
@@ -35,23 +26,4 @@ post请求
 数据库的简单要求  
   
 设计原型 axure  
-
-# 简单的使用方法
-## 初始化
-本地新建文件夹 CourseWeb  
-git init  
-git remote add origin https://github.com/ruanxu11/CourseWeb  
-git pull origin master  
-## 修改提交
-git pull origin master  
-git add *  
-git commit -am "昵称＋更新内容"  
-git push -u origin master  
-
-# pull记录
-每次变更后增加一条pull记录  
-格式：
-```
-## 日期
-昵称＋更新内容
 ```
