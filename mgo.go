@@ -47,6 +47,15 @@ func mgoFind(collection string, selector map[string]interface{}) (searchResults 
 	return searchResults, err
 }
 
+func mgoFindByPage(collection string, page int) (searchResults []map[string]interface{}, err error) {
+	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		err := c.Find(nil).Skip(page * 10).Limit(10).All(&searchResults)
+		return nil, err
+	}
+	_, err = withCollection(collection, query)
+	return searchResults, err
+}
+
 func mgoFindDistinct(collection string, selector map[string]interface{}, distinct string) (searchResults []string, err error) {
 	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
 		err := c.Find(selector).Distinct(distinct, &searchResults)
@@ -62,6 +71,21 @@ func mgoFindSort(collection string, query map[string]interface{}, sort string) (
 		return nil, err
 	}
 	_, err = withCollection(collection, q)
+	return searchResults, err
+}
+
+func mgoSearchSelect(collection string, selector map[string]interface{}) (searchResults []map[string]interface{}, err error) {
+	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		q := make(map[string]interface{})
+		for k, v := range selector {
+			if v != "" {
+				q[k] = v
+			}
+		}
+		c.Find(q).All(&searchResults)
+		return nil, err
+	}
+	_, err = withCollection(collection, query)
 	return searchResults, err
 }
 

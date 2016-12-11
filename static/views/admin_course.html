@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <form action="/admin/logout" method="post" >
+        <input type="submit" value="注销"/>
+    </form><br>
+    <form action="/admin/course" method="post" >{{range $item := .items}}
+            <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+        {{end}}
+        <input type="submit" name="submit" value="搜索"/><br>
+        <br>课程列表<br>
+        <input type="submit" name="submit" value="上一页"/>
+        <input type="text" name="page" value="{{.page}}"/>
+        <input type="submit" name="submit" value="转到"/>
+        <input type="submit" name="submit" value="下一页"/>
+        <input type="submit" name="submit" value="显示全部"/>
+    </form>
+    <table style="width:100%" border="1">
+        <tr>
+            <td style="width:70px">课程代码</td>
+            <td style="width:250px">课程名称</td>
+            <td style="width:160px">开课学院</td>
+            <td>学分</td>
+            <td style="width:50px">周学时</td>
+            <td style="width:100px">课程类型</td>
+            <td>预修要求</td>
+        </tr>
+    {{range $course := .courses}}
+        <tr>
+            <td><a href="/course/{{$course._id}}">{{$course._id}}</a></td>
+            <td><a href="/course/{{$course._id}}">{{$course.name}}</a></td>
+            <td>{{$course.college}}</td>
+            <td>{{$course.credit}}</td>
+            <td>{{$course.hoursperweek}}</td>
+            <td>{{$course.type}}</td>
+            <td>{{$course.previouscourse}}</td>
+        </tr>
+    {{end}}
+    </table>
+</body>
+</html>

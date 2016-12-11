@@ -101,7 +101,7 @@ func getClassForum(id string) ([]map[string]interface{}, error) {
 			},
 			{
 				"$sort": bson.M{
-					"_id.lastmodifytime": -1,
+					"_id.createtime": -1,
 				},
 			},
 		})

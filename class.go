@@ -23,24 +23,19 @@ type Class struct {
 	TeachingSyllabus    string      // 教学大纲 如果为空则用course的大纲
 	ClassRooms          []ClassRoom // 上课教室
 	Teachers            []TeacherInClass
-	TeachingAssistantID int
+	TeachingAssistantID string
 	TeachingAssistant   string
 	Students            []StudentInClass // 每个学生的学号
 	Assignments         []Assignment     // 作业
 	Forum               []Post           // 讨论区
 	Materials           []Material       // 课程资料
 	Announcements       []Announcement   // 课程公告
+	Powers              PowersInClass
 }
 
 type ClassRoom struct {
 	Time     string
 	Position string
-}
-
-type StudentInClass struct {
-	ID   string
-	Name []string
-	Team int
 }
 
 type TeacherInClass struct {
@@ -122,6 +117,17 @@ func getClass(id string) (map[string]interface{}, error) {
 	return mgoFind("class", bson.M{"_id": id})
 }
 
+func getClasses() ([]map[string]interface{}, error) {
+	return mgoFindAll("class", nil)
+}
+
+func searchClassesSelect(selector map[string]interface{}) ([]map[string]interface{}, error) {
+	return mgoSearchSelect("class", selector)
+}
+func getClassesByPage(page int) ([]map[string]interface{}, error) {
+	return mgoFindByPage("class", page)
+}
+
 func getClassByCourseID(courseid string) ([]map[string]interface{}, error) {
 	return mgoFindAll("class", bson.M{"courseid": courseid})
 }
@@ -150,15 +156,5 @@ func classHandlers() {
 			"title": courseWeb,
 			"class": class,
 		})
-	})
-
-	koala.Handle("/class/:id/remove", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
-		id := p.ParamUrl["id"]
-		_, err := removeClass(id)
-		if err != nil {
-			w.Write([]byte("删除教学班失败\n" + err.Error()))
-		} else {
-			w.Write([]byte("删除教学班成功\n"))
-		}
 	})
 }

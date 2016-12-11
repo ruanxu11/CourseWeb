@@ -24,10 +24,19 @@
         <a href="/user/teacher/{{$teacher.id}}">{{$teacher.name}}</a>
     {{end}}
     <br>
+    {{if .admin}}
+        <form action="/class/{{.class._id}}/teachingAssistant/update" method="post" >
+            <input type="text" name="ID" placeholder="请输入助教ID" />
+            <input type="text" name="ID" placeholder="请输入助教姓名" />
+            <input type="submit" name="submit" value="更改助教"/>
+        </form>
+    {{end}}
     助教：<a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a><br>
-    学生：
-    {{range $student := .class.students}}
-        <a href="/user/student/{{$student.id}}">{{$student.name}}</a>
+    {{if .PowerStudentList}}
+        学生列表：<br>
+        {{range $student := .class.students}}
+            <a href="/user/student/{{$student.id}}">{{$student.name}}</a>
+        {{end}}
     {{end}}
     <br>
 </body>

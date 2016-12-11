@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"koala"
@@ -135,6 +134,14 @@ func getCourse(id string) (map[string]interface{}, error) {
 	return mgoFind("course", bson.M{"_id": id})
 }
 
+func getCoursesByPage(page int) ([]map[string]interface{}, error) {
+	return mgoFindByPage("course", page)
+}
+
+func searchCoursesSelect(selector map[string]interface{}) ([]map[string]interface{}, error) {
+	return mgoSearchSelect("course", selector)
+}
+
 func getCourseIntroduction(id string) (string, error) {
 	course, err := mgoFind("course", bson.M{"_id": id})
 	if err != nil {
@@ -192,57 +199,63 @@ func courseHandlers() {
 			koala.NotFound(w)
 			return
 		}
+		admin := admincheck(w, r)
 		koala.Render(w, "course.html", map[string]interface{}{
 			"title":   courseWeb,
 			"course":  course,
 			"classes": classes,
+			"admin":   admin,
 		})
 	})
 
-	koala.Handle("/course/:id/class/add", func(p *koala.Params, w http.ResponseWriter, req *http.Request) {
-		// if !koala.ExistSession(req, "sessionID") {
-		// 	w.Write([]byte("请先登录"))
-		// } else {
-		CourseID := p.ParamUrl["CourseID"]
-		Course := p.Param["Course"][0]
-		Year := p.Param["Year"][0]
-		Semester := p.Param["Semester"][0]
-		sClassRoomNum := p.Param["ClassRoomNum"][0]
+	koala.Post("/course/:id/class/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
+		if !admincheck(w, r) {
+			koala.Relocation(w, "/admin", "请先登录", "error")
+			return
+		}
+		CourseID := p.ParamUrl["id"]
+		sClassRoomNum := p.ParamPost["ClassRoomNum"][0]
 		ClassRoomNum, _ := strconv.Atoi(sClassRoomNum)
 		ClassRooms := make([]ClassRoom, ClassRoomNum)
 		for i := 0; i < ClassRoomNum; i++ {
-			ClassRooms[i].Time = p.Param["ClassRoomTime"][i]
-			ClassRooms[i].Position = p.Param["ClassRoomPosition"][i]
+			ClassRooms[i].Time = p.ParamPost["ClassRoomTime"][i]
+			ClassRooms[i].Position = p.ParamPost["ClassRoomPosition"][i]
 		}
-		sTeacherNum := p.Param["TeacherNum"][0]
+		sTeacherNum := p.ParamPost["TeacherNum"][0]
 		TeacherNum, _ := strconv.Atoi(sTeacherNum)
 		Teachers := make([]TeacherInClass, TeacherNum)
 		for i := 0; i < TeacherNum; i++ {
-			Teachers[i].ID = p.Param["TeacherID"][i]
-			Teachers[i].Name = p.Param["TeacherName"][i]
+			Teachers[i].ID = p.ParamPost["TeacherID"][i]
+			Teachers[i].Name = p.ParamPost["TeacherName"][i]
 		}
 		class := &Class{
 			CourseID:   CourseID,
-			Course:     Course,
-			Year:       Year,
-			Semester:   Semester,
+			Course:     p.ParamPost["Course"][0],
+			Year:       p.ParamPost["Year"][0],
+			Semester:   p.ParamPost["Semester"][0],
 			ClassRooms: ClassRooms,
 			Teachers:   Teachers,
 		}
 		err := addClass(class)
 		if err != nil {
-			w.Write([]byte("添加教学班失败\n" + err.Error()))
-		} else {
-			w.Write([]byte("添加教学班成功\n"))
-			classes, err := getAllClasses()
-			if err != nil {
-				w.Write([]byte("查看教学班失败\n" + err.Error()))
-			} else {
-				json, _ := json.Marshal(classes)
-				w.Write([]byte("教学班\n"))
-				w.Write([]byte(json))
-			}
+			koala.Relocation(w, "/course/"+CourseID, "添加教学班失败", "error")
+			return
 		}
-		// }
+		koala.Relocation(w, "/course/"+CourseID, "添加教学班成功", "success")
+	})
+
+	koala.Get("/course/:courseid/class/remove/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
+		if !admincheck(w, r) {
+			koala.Relocation(w, "/", "管理员账户才有权限", "error")
+			return
+		}
+		id := p.ParamUrl["id"]
+		CourseID := p.ParamUrl["courseid"]
+		_, err := removeClass(id)
+		if err != nil {
+			koala.Relocation(w, "/course/"+CourseID, "删除教学班失败", "error")
+			return
+		}
+		koala.Relocation(w, "/course/"+CourseID, "删除教学班成功", "success")
 	})
 }

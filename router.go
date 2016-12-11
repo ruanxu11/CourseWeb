@@ -18,7 +18,9 @@ func RouteStart() {
 	http.Handle("/views/", http.StripPrefix("/views/", http.FileServer(http.Dir("static/views"))))
 	http.Handle("/template/", http.StripPrefix("/template/", http.FileServer(http.Dir("static/template"))))
 	http.Handle("/material/", http.StripPrefix("/material/", http.FileServer(http.Dir("static/upload/material"))))
+	http.Handle("/assignment/", http.StripPrefix("/assignment/", http.FileServer(http.Dir("static/upload/assignment"))))
 
+	adminHandlers()
 	userHandlers()
 	classHandlers()
 	courseHandlers()

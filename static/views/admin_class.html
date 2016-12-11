@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <form action="/admin/logout" method="post" >
+        <input type="submit" value="注销"/>
+    </form>
+    <form action="/admin/class" method="post" >
+        {{range $item := .items}}
+            <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+        {{end}}
+        <input type="submit" name="submit" value="搜索"/><br>
+        <br>教学班列表<br>
+        <input type="submit" name="submit" value="上一页"/>
+        <input type="text" name="page" value="{{.page}}"/>
+        <input type="submit" name="submit" value="转到"/>
+        <input type="submit" name="submit" value="下一页"/>
+        <input type="submit" name="submit" value="显示全部"/>
+    </form>
+    <table style="width:100%" border="1">
+        <tr>
+            <td>学年</td>
+            <td>学期</td>
+            <td>课程代码</td>
+            <td>课程名称</td>
+            <td>上课时间和地点</td>
+            <td>老师</td>
+            <td>助教</td>
+        </tr>
+    {{range $class := .classes}}
+        <tr>
+            <td>{{$class.year}}</td>
+            <td>{{$class.semester}}</td>
+            <td><a href="/course/{{$class.courseid}}">{{$class.courseid}}</a></td>
+            <td><a href="/class/{{$class._id}}">{{$class.course}}</a></td>
+            <td>
+                {{range $classroom := $class.classrooms}}
+                    {{$classroom.time}} {{$classroom.position}} <br>
+                {{end}}
+            </td>
+            <td>
+                {{range $teacher := $class.teachers}}
+                    <a href="/user/teacher/{{$teacher.id}}">{{$teacher.name}}</a>
+                {{end}}
+            </td>
+            <td>
+                <a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a>
+            </td>
+        </tr>
+    {{end}}
+    </table>
+</body>
+</html>

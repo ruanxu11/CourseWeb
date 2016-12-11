@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <form action="/admin/logout" method="post" >
+        <input type="submit" value="注销"/>
+    </form>
+    <form action="/admin/student" method="post" >
+        <div style="position:fixed; top:0; right:0">
+            {{range $item := .items}}
+                <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+            {{end}}
+            <input type="submit" name="submit" value="增加"/><br>
+        </div>
+    </form>
+    <form action="/admin/student" method="post" >
+            {{range $item := .items}}
+                <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+            {{end}}
+            <input type="submit" name="submit" value="搜索"/><br>
+        <br>学生列表<br>
+        <input type="submit" name="submit" value="上一页"/>
+        <input type="text" name="page" value="{{.page}}"/>
+        <input type="submit" name="submit" value="转到"/>
+        <input type="submit" name="submit" value="下一页"/>
+        <input type="submit" name="submit" value="显示全部"/>
+    </form>
+    <table style="width:100%" border="1">
+        <tr>
+            <td>学号</td>
+            <td>姓名</td>
+            <td>性别</td>
+            <td>电子邮箱</td>
+            <td>电话</td>
+            <td>学院</td>
+            <td>系</td>
+            <td>专业</td>
+            <td>行政班</td>
+            <td>操作</td>
+        </tr>
+    {{range $student := .students}}
+        <tr>
+            <td>{{$student._id}}</td>
+            <td><a href="/user/student/{{$student._id}}">{{$student.name}}</a></td>
+            <td>{{$student.sex}}</td>
+            <td>{{$student.email}}</td>
+            <td>{{$student.phone}}</td>
+            <td>{{$student.college}}</td>
+            <td>{{$student.department}}</td>
+            <td>{{$student.major}}</td>
+            <td>{{$student.administrationclass}}</td>
+            <td><a href="/user/student/{{$student._id}}/remove">删除学生</a></td>
+        </tr>
+    {{end}}
+    </table>
+</body>
+</html>

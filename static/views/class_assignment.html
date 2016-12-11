@@ -7,5 +7,42 @@
 <body>
     <a href="/class/{{.id}}"><<返回教学班主页</a><br><br>
         作业<br><br>
+    {{if .addpower}}
+        <form action="/class/{{.id}}/assignment/add" method="post" enctype ="multipart/form-data">
+            <textarea style="height: 400px; width: 600px" name="content"></textarea><br>
+            <input type="text" name="ddl" placeholder="作业截止时间" />
+            <input type="text" name="Type" placeholder="作业类型" />
+            <input type="text" name="maxScore" placeholder="作业分值" /><br>
+            <input type="file" name="file"/>
+            <input type="submit" value="新增作业"/>
+        </form><br>
+    {{end}}
+    {{if .viewpower}}
+        <table border="1">
+            <tr>
+                <td>作业发布时间</td>
+                <td>作业截止时间</td>
+                <td>作业要求</td>
+                <td>作业分值</td>
+                <td>作业类型</td>
+                <td>附件</td>
+            </tr>
+        {{range $assignment := .assignments}}
+            <tr>
+                <td>{{$assignment.time}}</td>
+                <td>{{$assignment.deadline}}</td>
+                <!--<td><a href="/class/{{.id}}/assignment/content/{{$assignment.type}}/{{$assignment.id}}">{{$assignment.topic}}</td>-->
+                <td>{{$assignment.topic}}</td>
+                <td>{{$assignment.maxscore}}</td>
+                <td>{{$assignment.type}}</td>
+                <td>
+                    {{if ne $assignment.attachpath ""}}
+                        <a href="{{$assignment.attachpath}}">下载附件</a>
+                    {{end}}
+                </td>
+            </tr>
+        {{end}}
+        </table>
+    {{end}}
 </body>
 </html>

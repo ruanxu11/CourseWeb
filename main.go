@@ -1,6 +1,27 @@
 package main
 
 var courseWeb = "浙江大学课程网站系统"
+var globalPowers = map[string][]string{
+	"PowerForum":                  []string{"all"},
+	"PowerForumPost":              []string{"class"},
+	"PowerForumReply":             []string{"class"},
+	"PowerForumPostRemove":        []string{"teacher", "teachingAssistant"},
+	"PowerMaterialAdd":            []string{"teacher"},
+	"PowerMaterialRemove":         []string{"teacher"},
+	"PowerMaterialDownload":       []string{"class"},
+	"PowerAssignmentAdd":          []string{"teacher", "teachingAssistant"},
+	"PowerAssignmentRemove":       []string{"teacher", "teachingAssistant"},
+	"PowerAssignmentUpdate":       []string{"teacher", "teachingAssistant"},
+	"PowerAssignmentView":         []string{"teacher", "teachingAssistant"},
+	"PowerAssignmentCheck":        []string{"teacher", "teachingAssistant"},
+	"PowerAnnouncementAdd":        []string{"teacher"},
+	"PowerAnnouncementRemove":     []string{"teacher"},
+	"PowerAnnouncementUpdate":     []string{"teacher"},
+	"PowerAnnouncementView":       []string{"teacher"},
+	"PowerTeachingSyllabusUpdate": []string{"teacher"},
+	"PowerIntroductionUpdate":     []string{"teacher"},
+	"PowerStudentList":            []string{"teacher", "teachingAssistant"},
+}
 
 func main() {
 	// addStudents()
@@ -44,5 +65,9 @@ func main() {
 	// 	log.Println(err)
 	// }
 	// initStudents()
+	// addStudentsInClass("8f48b0a04ed189183e224b20dbe156b0", &StudentInClass{
+	// 	ID:   "3140102431",
+	// 	Name: "徐亮",
+	// })
 	RouteStart()
 }

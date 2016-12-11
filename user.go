@@ -11,6 +11,7 @@ import (
 
 	"log"
 
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -148,6 +149,17 @@ func getUserInfo(collection string, id string) (*map[string]interface{}, error) 
 		return getTeacherInfo(collection, id)
 	} else if collection == "teachingAssistant" {
 		return getTeachingAssistantInfo(collection, id)
+	}
+	return nil, errors.New("类型错误")
+}
+
+func removeUserById(collection string, id string) (*mgo.ChangeInfo, error) {
+	if collection == "student" {
+		return removeStudentByID(id)
+	} else if collection == "teacher" {
+		return removeTeacherByID(id)
+	} else if collection == "teachingAssistant" {
+		return removeTeachingAssistantByID(id)
 	}
 	return nil, errors.New("类型错误")
 }
@@ -341,5 +353,21 @@ func userHandlers() {
 		} else {
 			koala.Relocation(w, "/user/"+collection+"/"+id, "修改安全问题成功", "success")
 		}
+	})
+
+	koala.Get("/user/:collection/:id/remove", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
+		if !admincheck(w, r) {
+			koala.Relocation(w, "/", "管理员账户才有权限", "error")
+			return
+		}
+		collection := p.ParamUrl["collection"]
+		id := p.ParamUrl["id"]
+		_, err := removeUserById(collection, id)
+		if err != nil {
+			log.Println(err)
+			koala.Relocation(w, "/admin/"+collection, "删除用户失败", "error")
+			return
+		}
+		koala.Relocation(w, "/admin/"+collection, "删除用户成功", "success")
 	})
 }

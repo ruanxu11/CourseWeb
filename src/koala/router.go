@@ -74,6 +74,7 @@ func (app *App) route(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if showLog {
+				log.Println(route.slice)
 				fmt.Print("get: ")
 				fmt.Println(p.ParamGet)
 				fmt.Print("post: ")

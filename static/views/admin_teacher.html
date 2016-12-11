@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <form action="/admin/logout" method="post" >
+        <input type="submit" value="注销"/>
+    </form>
+    <form action="/admin/teacher" method="post" >
+        <div style="position:fixed; top:0; right:0">
+            {{range $item := .items}}
+                <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+            {{end}}
+            <input type="submit" name="submit" value="增加"/><br>
+        </div>
+    </form>
+    <form action="/admin/teacher" method="post" >
+            {{range $item := .items}}
+                <input type="text" name="{{$item}}" placeholder="{{$item}}"/><br>
+            {{end}}
+            <input type="submit" name="submit" value="搜索"/><br>
+        <br>老师列表<br>
+        <input type="submit" name="submit" value="上一页"/>
+        <input type="text" name="page" value="{{.page}}"/>
+        <input type="submit" name="submit" value="转到"/>
+        <input type="submit" name="submit" value="下一页"/>
+        <input type="submit" name="submit" value="显示全部"/>
+    </form>
+    <table style="width:100%" border="1">
+        <tr>
+            <td>学号</td>
+            <td>姓名</td>
+            <td>性别</td>
+            <td>电子邮箱</td>
+            <td>电话</td>
+            <td>学院</td>
+            <td>系</td>
+            <td>学历</td>
+            <td>职称</td>
+            <td>研究方向</td>
+            <td>操作</td>
+        </tr>
+    {{range $teacher := .teachers}}
+        <tr>
+            <td>{{$teacher._id}}</td>
+            <td><a href="/user/teacher/{{$teacher._id}}">{{$teacher.name}}</a></td>
+            <td>{{$teacher.sex}}</td>
+            <td>{{$teacher.email}}</td>
+            <td>{{$teacher.phone}}</td>
+            <td>{{$teacher.college}}</td>
+            <td>{{$teacher.department}}</td>
+            <td>{{$teacher.academicbackground}}</td>
+            <td>{{$teacher.academictitle}}</td>
+            <td>{{$teacher.researchdirections}}</td>
+            <td><a href="/user/teacher/{{$teacher._id}}/remove">删除老师</a></td>
+        </tr>
+    {{end}}
+    </table>
+</body>
+</html>

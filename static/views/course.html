@@ -13,8 +13,26 @@
     课程类型：{{.course.type}}<br>
     预修要求：{{.course.previouscourse}}<br>
     课程大纲：{{.course.teachingsyllabus}}<br>
-    课程简介：{{.course.introduction}}<br>
-    该课程的教学班<br>
+    课程简介：{{.course.introduction}}<br><br>
+    {{if .admin}}
+        <form action="/course/{{.course._id}}/class/add" method="post" >
+            <input type="text" name="Course" value="{{.course.name}}" hidden/>
+            <input type="text" name="Year" placeholder="请输入学年(例：2016-2017)" />
+            <input type="text" name="Semester" placeholder="请输入学期(例：春夏)" /><br>
+            <input type="text" name="ClassRoomNum" placeholder="请输入教室数量" />
+            <input type="text" name="ClassRoomTime" placeholder="请输入上课时间" />
+            <input type="text" name="ClassRoomPosition" placeholder="请输入上课地点" />
+            <input type="text" name="ClassRoomTime" placeholder="请输入上课时间" />
+            <input type="text" name="ClassRoomPosition" placeholder="请输入上课地点" /><br>
+            <input type="text" name="TeacherNum" placeholder="请输入教师数量" />
+            <input type="text" name="TeacherID" placeholder="请输入教师ID" />
+            <input type="text" name="TeacherName" placeholder="请输入教师姓名" />
+            <input type="text" name="TeacherID" placeholder="请输入教师ID" />
+            <input type="text" name="TeacherName" placeholder="请输入教师姓名" /><br>
+            <input type="submit" name="submit" value="创建课程"/>
+        </form>
+    {{end}}
+    <br>该课程的教学班<br>
     <table  border="1">
         <tr>
             <td>学年</td>
@@ -24,6 +42,7 @@
             <td>上课时间和地点</td>
             <td>老师</td>
             <td>助教</td>
+            <td>操作</td>
         </tr>
     {{range $class := .classes}}
         <tr>
@@ -44,7 +63,9 @@
             <td>
                 <a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a>
             </td>
+            <td><a href="/course/{{$.course._id}}/class/remove/{{$class._id}}">删除教学班</a></td>
         </tr>
     {{end}}
+    </table>
 </body>
 </html>

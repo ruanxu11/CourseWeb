@@ -40,6 +40,17 @@ func searchTeachingAssistants(selector map[string]interface{}) ([]map[string]int
 	return mgoFindAll("teachingAssistant", selector)
 }
 
+func getTeachingAssistants() ([]map[string]interface{}, error) {
+	return mgoFindAll("teachingAssistant", nil)
+}
+
+func searchTeachingAssistantsSelect(selector map[string]interface{}) ([]map[string]interface{}, error) {
+	return mgoSearchSelect("teachingAssistant", selector)
+}
+func getTeachingAssistantsByPage(page int) ([]map[string]interface{}, error) {
+	return mgoFindByPage("teachingAssistant", page)
+}
+
 func getTeachingAssistantInfo(collection string, id string) (*map[string]interface{}, error) {
 	person, err := mgoFind(collection,
 		bson.M{"_id": id})
