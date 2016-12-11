@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn">
 <head>
     <title>{{.title}}</title>
 </head>
 
 <body>
-    浙江大学课程网站系统...<br>
-    正在建设中...<br><br>
-    readme.md<br>
-    {{.readme}}
+    <form action="/login" method="post">
+        <input type="text" name="id" placeholder="请输入帐号" /> <br />
+        <input type="text" name="password" placeholder="请输入密码" /> <br />
+            <input type="radio" name="collection" value="student" checked/> 学生
+            <input type="radio" name="collection" value="teacher" /> 老师
+            <input type="radio" name="collection" value="teachingAssistant" /> 助教 <br />
+        <input type="submit" value="登录"/>
+    </form>
+    <form action="/forget/password/id" method="get">
+        <input type="submit" value="忘记密码"/>
+    </form>
+    <br>已经开课的课程列表<br>
+    <table  border="1">
+        <tr>
+            <td>课程代码</td>
+            <td>课程名称</td>
+            <td>开课学院</td>
+            <td>学分</td>
+            <td>周学时</td>
+            <td>课程类型</td>
+        </tr>
+    {{range $course := .courses}}
+        <tr>
+            <td><a href="/course/{{$course._id}}">{{$course._id}}</a></td>
+            <td><a href="/course/{{$course._id}}">{{$course.name}}</a></td>
+            <td>{{$course.college}}</td>
+            <td>{{$course.credit}}</td>
+            <td>{{$course.hoursperweek}}</td>
+            <td>{{$course.type}}</td>
+        </tr>
+    {{end}}
 </body>
 </html>

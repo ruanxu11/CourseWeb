@@ -2,7 +2,6 @@ package koala
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 )
@@ -54,34 +53,48 @@ func PeekSession(r *http.Request, cookieName string) *Session {
 	return nil
 }
 
+func CheckSession(r *http.Request, m map[string]interface{}) bool {
+	session := PeekSession(r, "sessionID")
+	if session == nil {
+		return false
+	}
+	for k, v := range m {
+		if val, ok := session.Values[k]; ok {
+			if v != val {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
 func GetSession(r *http.Request, w http.ResponseWriter, cookieName string) *Session {
 	c, err := r.Cookie(cookieName)
-	log.Println("cookie: ", c)
 	if err != nil {
-		log.Println("no cookies")
 		sessionID := NewSession()
+		s := Sessions[sessionID]
 		c = &http.Cookie{
-			Name:  cookieName,
-			Value: sessionID,
+			Name:    cookieName,
+			Value:   sessionID,
+			Expires: time.Now().Add(s.ExpireTime),
 		}
 		http.SetCookie(w, c)
-		s := Sessions[sessionID]
 		return &s
 	}
-	log.Println("exist cookies")
 	if s, ok := Sessions[c.Value]; ok {
-		log.Println("exist session")
 		s.IsNew = false
 		return &s
 	} else {
-		log.Println("no session")
 		sessionID := NewSession()
+		s := Sessions[sessionID]
 		c = &http.Cookie{
-			Name:  cookieName,
-			Value: sessionID,
+			Name:    cookieName,
+			Value:   sessionID,
+			Expires: time.Now().Add(s.ExpireTime),
 		}
 		http.SetCookie(w, c)
-		s := Sessions[sessionID]
 		return &s
 	}
 	return nil

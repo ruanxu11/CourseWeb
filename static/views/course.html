@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    课程代码：{{.course._id}}<br>
+    课程名称：{{.course.name}}<br>
+    开课学院：{{.course.college}}<br>
+    学分：{{.course.credit}}<br>
+    周学时：{{.course.hoursperweek}}<br>
+    课程类型：{{.course.type}}<br>
+    预修要求：{{.course.previouscourse}}<br>
+    课程大纲：{{.course.teachingsyllabus}}<br>
+    课程简介：{{.course.introduction}}<br>
+    该课程的教学班<br>
+    <table  border="1">
+        <tr>
+            <td>学年</td>
+            <td>学期</td>
+            <td>课程代码</td>
+            <td>课程名称</td>
+            <td>上课时间和地点</td>
+            <td>老师</td>
+            <td>助教</td>
+        </tr>
+    {{range $class := .classes}}
+        <tr>
+            <td>{{$class.year}}</td>
+            <td>{{$class.semester}}</td>
+            <td><a href="/course/{{$class.courseid}}">{{$class.courseid}}</a></td>
+            <td><a href="/class/{{$class._id}}">{{$class.course}}</a></td>
+            <td>
+                {{range $classroom := $class.classrooms}}
+                    {{$classroom.time}} {{$classroom.position}} <br>
+                {{end}}
+            </td>
+            <td>
+                {{range $teacher := $class.teachers}}
+                    <a href="/user/teacher/{{$teacher.id}}">{{$teacher.name}}</a>
+                {{end}}
+            </td>
+            <td>
+                <a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a>
+            </td>
+        </tr>
+    {{end}}
+</body>
+</html>

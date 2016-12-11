@@ -1,16 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"koala"
 	"log"
 	"net/http"
 	"regexp"
 	"strconv"
 
-	"labix.org/v2/mgo/bson"
-
 	iconv "github.com/djimenez/iconv-go"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 )
 
 type Course struct {
@@ -25,9 +27,9 @@ type Course struct {
 	TeachingSyllabus string // 教学大纲
 }
 
-func getCourses(id int) {
-	no := strconv.Itoa(id)
-	url := "http://10.202.78.13/html_kc/" + no + ".html"
+func initCourses(no int) {
+	id := strconv.Itoa(no)
+	url := "http://10.202.78.13/html_kc/" + id + ".html"
 	log.Println(id)
 	r, err := http.Get(url)
 	if err != nil {
@@ -90,7 +92,7 @@ func getCourses(id int) {
 	}
 
 	course := &Course{
-		ID:               no,
+		ID:               id,
 		Name:             Name,
 		College:          College,
 		HoursPerWeek:     HoursPerWeek,
@@ -99,17 +101,45 @@ func getCourses(id int) {
 		Introduction:     Introduction,
 		TeachingSyllabus: TeachingSyllabus,
 	}
-	err = mgoInsert("course", &course)
+	err = addCourse(course)
 	if err != nil {
-		log.Println("failed")
 		log.Println(err)
-	} else {
-		log.Println("success")
 	}
 }
 
-func showCourseIntroduction(id string) (string, error) {
+func addCourse(course *Course) error {
+	return mgoInsert("course", &course)
+}
+
+func removeCourses(selector map[string]interface{}) (*mgo.ChangeInfo, error) {
+	return mgoRemoveAll("course", selector)
+}
+
+func removeCourseByID(id string) (*mgo.ChangeInfo, error) {
+	return mgoRemove("course", bson.M{"_id": id})
+}
+
+func updateCourses(selector map[string]interface{}, update map[string]interface{}) (*mgo.ChangeInfo, error) {
+	return mgoUpdateAll("course", selector, update)
+}
+
+func updateCourseByID(id string, update map[string]interface{}) error {
+	return mgoUpdate("course", bson.M{"_id": id}, update)
+}
+
+func searchCourses(selector map[string]interface{}) ([]map[string]interface{}, error) {
+	return mgoFindAll("course", selector)
+}
+
+func getCourse(id string) (map[string]interface{}, error) {
+	return mgoFind("course", bson.M{"_id": id})
+}
+
+func getCourseIntroduction(id string) (string, error) {
 	course, err := mgoFind("course", bson.M{"_id": id})
+	if err != nil {
+		return "", err
+	}
 	switch course["introduction"].(type) {
 	case string:
 		introduction := course["introduction"].(string)
@@ -127,8 +157,11 @@ func updateCourseIntroduction(id string, introduction string) error {
 		bson.M{"$set": bson.M{"introduction": introduction}})
 }
 
-func showCourseTeachingSyllabus(id string) (string, error) {
+func getCourseTeachingSyllabus(id string) (string, error) {
 	course, err := mgoFind("course", bson.M{"_id": id})
+	if err != nil {
+		return "", err
+	}
 	switch course["teachingsyllabus"].(type) {
 	case string:
 		teachingsyllabus := course["teachingsyllabus"].(string)
@@ -144,4 +177,72 @@ func updateCourseTeachingSyllabus(id string, teachingsyllabus string) error {
 	return mgoUpdate("course",
 		bson.M{"_id": id},
 		bson.M{"$set": bson.M{"teachingsyllabus": teachingsyllabus}})
+}
+
+func courseHandlers() {
+	koala.Get("/course/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
+		id := p.ParamUrl["id"]
+		course, err := getCourse(id)
+		if err != nil {
+			koala.NotFound(w)
+			return
+		}
+		classes, err := getClassByCourseID(id)
+		if err != nil {
+			koala.NotFound(w)
+			return
+		}
+		koala.Render(w, "course.html", map[string]interface{}{
+			"title":   courseWeb,
+			"course":  course,
+			"classes": classes,
+		})
+	})
+
+	koala.Handle("/course/:id/class/add", func(p *koala.Params, w http.ResponseWriter, req *http.Request) {
+		// if !koala.ExistSession(req, "sessionID") {
+		// 	w.Write([]byte("请先登录"))
+		// } else {
+		CourseID := p.ParamUrl["CourseID"]
+		Course := p.Param["Course"][0]
+		Year := p.Param["Year"][0]
+		Semester := p.Param["Semester"][0]
+		sClassRoomNum := p.Param["ClassRoomNum"][0]
+		ClassRoomNum, _ := strconv.Atoi(sClassRoomNum)
+		ClassRooms := make([]ClassRoom, ClassRoomNum)
+		for i := 0; i < ClassRoomNum; i++ {
+			ClassRooms[i].Time = p.Param["ClassRoomTime"][i]
+			ClassRooms[i].Position = p.Param["ClassRoomPosition"][i]
+		}
+		sTeacherNum := p.Param["TeacherNum"][0]
+		TeacherNum, _ := strconv.Atoi(sTeacherNum)
+		Teachers := make([]TeacherInClass, TeacherNum)
+		for i := 0; i < TeacherNum; i++ {
+			Teachers[i].ID = p.Param["TeacherID"][i]
+			Teachers[i].Name = p.Param["TeacherName"][i]
+		}
+		class := &Class{
+			CourseID:   CourseID,
+			Course:     Course,
+			Year:       Year,
+			Semester:   Semester,
+			ClassRooms: ClassRooms,
+			Teachers:   Teachers,
+		}
+		err := addClass(class)
+		if err != nil {
+			w.Write([]byte("添加教学班失败\n" + err.Error()))
+		} else {
+			w.Write([]byte("添加教学班成功\n"))
+			classes, err := getAllClasses()
+			if err != nil {
+				w.Write([]byte("查看教学班失败\n" + err.Error()))
+			} else {
+				json, _ := json.Marshal(classes)
+				w.Write([]byte("教学班\n"))
+				w.Write([]byte(json))
+			}
+		}
+		// }
+	})
 }

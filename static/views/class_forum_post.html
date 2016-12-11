@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <a href="/class/{{.id}}"><<返回教学班主页</a><br><br>
+        讨论区<br><br>
+    <table border="1">
+        <tr>
+            <td colspan="2" style="width:1000px">帖子主题：{{.post.topic}}</td>
+        </tr>
+        <tr>
+            <td  style="width:200px">
+            {{.post.createtime}}<br>
+                <a href="/user/{{.post.postercollection}}/{{.post.posterid}}">{{.post.poster}}</a>
+            </td>
+            <td>
+                {{if .postpower}}
+                <a href="javascript:void(0)" onclick="reply({{.post.poster}}, {{.post.content}})">引用</a><br>
+                {{end}}
+                <h4>{{.post.topic}}</h4>
+                {{.post.content}}<br><br>
+                {{if .removepower}}
+                    <br><a href="/class/{{$.id}}/forum/remove/{{.post.id}}">删除帖子</a>
+                {{end}}
+            </td>
+            </tr>
+    {{range $reply := .post.replies}}
+        <tr>
+            <td>
+                {{$reply.time}}<br>
+                <a href="/user/{{$reply.postercollection}}/{{$reply.posterid}}">{{$reply.poster}}</a>
+            </td>
+            <td>
+                
+                {{if $.postpower}}
+                    <a href="javascript:void(0)" onclick="reply({{$reply.poster}}, {{$reply.content}})">引用</a><br>
+                {{end}}
+                <br>{{$reply.content}}<br><br>
+                {{if $.removepower}}
+                    <br><a href="/class/{{$.id}}/forum/post/{{$.post.id}}/remove/{{$reply.id}}">删除发言</a>
+                {{end}}
+            </td>
+        </tr>
+    {{end}}
+    {{if .postpower}}
+        <tr>
+            <td colspan="6">
+            <form action="/class/{{.id}}/forum/post/{{.post.id}}/add" method="post">
+                <textarea style="height: 400px; width: 600px" id="reply" name="content" placeholder="..."></textarea><br>
+                <input type="submit" value="回复"/>
+            </form>
+            </td>
+        </tr>
+    {{end}}
+    </table>
+    <script>
+    function reply(poster, content){
+        document.getElementById("reply").focus();
+        document.getElementById("reply").innerHTML = 
+        "---------------------------------------------\n"+
+        "引用"+poster+"的发言\n>>> "+content+
+        "\n---------------------------------------------\n";
+    }
+</script>
+</body>
+</html>

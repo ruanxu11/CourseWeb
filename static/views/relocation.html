@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+    <script src='/js/sweetalert.min.js'></script>
+    <link rel="stylesheet" href="/css/sweetalert.css">
+</head>
+
+<body>
+    <script>
+        // sweetAlert('Oops...', '{{.alert}}', 'error');
+        // http://t4t5.github.io/sweetalert/ 
+        swal({
+            title: "{{.title}}",
+            // text: "{{.content}}",
+            type: "{{.Type}}",
+            timer: 2000,
+            showConfirmButton: false 
+        });
+        setTimeout( "window.location.href='{{.url}}'", 2000);
+    </script>
+</body>
+</html>

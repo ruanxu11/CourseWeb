@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    {{if .login}} 
+        <form action="/logout" method="post" >
+            <input type="submit" value="注销"/>
+        </form>
+    {{end}}
+    {{if .self}}
+        <form action="/user/{{.collection}}/{{.userInfo.id}}/security/questions/update/by/password" method="get">
+            <input type="submit" value="通过密码修改安全问题"/>
+        </form>
+
+        <form action="/user/{{.collection}}/{{.userInfo.id}}/security/questions/update/by/security/questions" method="get">
+            <input type="submit" value="验证并修改安全问题"/>
+        </form>
+        
+        <form action="/user/{{.collection}}/{{.userInfo.id}}/password/update" method="post">
+            <input type="text" name="oldPassword" placeholder="请输入旧密码" value="{{.userInfo.id}}"/> <br />
+            <input type="text" name="newPassword" placeholder="请输入新密码" value="{{.userInfo.id}}"/> <br />
+            <input type="text" name="newPasswordR" placeholder="请再次输入新密码" value="{{.userInfo.id}}"/> <br />
+            <input type="submit" value="修改密码"/>
+        </form>
+        我的个人主页<br>
+        <form action="/user/{{.collection}}/{{.userInfo.id}}/update" method="post" >
+            id : <input type="text" value="{{.userInfo.id}}" disabled/> <br />
+            name : <input type="text" value="{{.userInfo.name}}" disabled/> <br />
+            sex : <input type="text" value="{{.userInfo.sex}}" disabled/> <br />
+            email : <input type="text" name="email" value="{{.userInfo.email}}"/> <br />
+            phone : <input type="text" name="phone" value="{{.userInfo.phone}}"/> <br />
+            college : <input type="text" value="{{.userInfo.college}}" disabled/> <br />
+            department : <input type="text" value="{{.userInfo.department}}" disabled/> <br />
+            major : <input type="text" value="{{.userInfo.major}}" disabled/> <br />
+            administrationclass : <input type="text" value="{{.userInfo.administrationclass}}" disabled/> <br />
+            introduction : <textarea style="height: 200px; width: 300px" name="introduction">{{.userInfo.introduction}}</textarea><br />
+            <input type="submit" value="修改个人信息"/>
+        </form>
+    {{else}}
+        {{.userInfo.name}}同学的个人主页<br>
+        id : {{.userInfo.id}}<br>
+        name : {{.userInfo.name}}<br>
+        sex : {{.userInfo.sex}}<br>
+        email : {{.userInfo.email}}<br>
+        phone : {{.userInfo.phone}}<br>
+        college : {{.userInfo.college}}<br>
+        department : {{.userInfo.department}}<br>
+        major : {{.userInfo.major}}<br>
+        administrationclass : {{.userInfo.administrationclass}}<br>
+        introduction : {{.userInfo.introduction}}<br>
+    {{end}}
+</body>
+</html>

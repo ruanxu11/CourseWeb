@@ -52,23 +52,28 @@ func (app *App) route(w http.ResponseWriter, r *http.Request) {
 			if len(url) != len(route.slice) {
 				continue
 			}
-			matched := true
-			for i := 0; i < len(route.slice); i++ {
-				if route.slice[i][0] == ':' {
-					p.ParamUrl[route.slice[i][1:]] = url[i]
-				} else if route.slice[i] == url[i] {
+			if len(route.slice[0]) == 0 {
+				if len(url[0]) != 0 {
 					continue
-				} else {
-					matched = false
-					break
 				}
-			}
-			if !matched {
-				continue
+			} else {
+				matched := true
+				for i := 0; i < len(route.slice); i++ {
+					if route.slice[i][0] == ':' {
+						p.ParamUrl[route.slice[i][1:]] = url[i]
+					} else if route.slice[i] == url[i] {
+						continue
+					} else {
+						matched = false
+						break
+					}
+				}
+				if !matched {
+					continue
+				}
 			}
 
 			if showLog {
-				log.Println(route.slice)
 				fmt.Print("get: ")
 				fmt.Println(p.ParamGet)
 				fmt.Print("post: ")
@@ -84,8 +89,7 @@ func (app *App) route(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !isFound {
-		// 未匹配到路由
-		fmt.Fprint(w, "404 Page Not Found!")
+		NotFound(w)
 	}
 }
 
@@ -98,12 +102,17 @@ func Get(pattern string, handler interface{}) {
 }
 
 func Post(pattern string, handler interface{}) {
-	app.addRoute(pattern, "Post", handler)
+	app.addRoute(pattern, "POST", handler)
 }
 
 func (app *App) addRoute(pattern string, method string, handler interface{}) {
 	slice := strings.Split(pattern, "/")
 	app.routes = append(app.routes, Route{slice: slice[1:], method: method, handler: handler.(func(p *Params, w http.ResponseWriter, r *http.Request))})
+}
+
+func NotFound(w http.ResponseWriter) {
+	w.WriteHeader(404)
+	w.Write([]byte("404 Page Not Found!"))
 }
 
 var app = App{}

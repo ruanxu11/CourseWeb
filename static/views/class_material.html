@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <a href="/class/{{.id}}">返回教学班主页</a><br><br>
+        课程资料<br><br>
+    {{if .power}}
+        <form action="/class/{{.id}}/material/add" method="post" enctype ="multipart/form-data">
+            <input type="file" name="material"/>
+            <input type="submit" value="新增课程资料"/>
+        </form><br>
+
+        <table border="1">
+            <tr>
+                <td>上传时间</td>
+                <td>资料名称</td>
+                <td>类型</td>
+                <td>操作</td>
+            </tr>
+        {{range $material := .materials}}
+            <tr>
+                <td>{{$material.time}}</td>
+                <td><a href="{{$material.path}}">{{$material.filename}}</a></td>
+                <td>{{$material.suffix}}</td>
+                <td><a href="/class/{{$.id}}/material/{{$material.time}}/remove">删除资料</a></td>
+            </form>
+            </tr>
+        {{end}}
+        </table>
+    {{else if .permission}}
+        <table border="1">
+            <tr>
+                <td>上传时间</td>
+                <td>资料名称</td>
+                <td>类型</td>
+            </tr>
+        {{range $material := .materials}}
+            <tr>
+                <td>{{$material.time}}</td>
+                <td><a href="{{$material.path}}">{{$material.filename}}</a></td>
+                <td>{{$material.suffix}}</td>
+            </form>
+            </tr>
+        {{end}}
+        </table>
+    {{end}}
+</body>
+</html>

@@ -47,6 +47,33 @@ func mgoFind(collection string, selector map[string]interface{}) (searchResults 
 	return searchResults, err
 }
 
+func mgoFindDistinct(collection string, selector map[string]interface{}, distinct string) (searchResults []string, err error) {
+	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		err := c.Find(selector).Distinct(distinct, &searchResults)
+		return nil, err
+	}
+	_, err = withCollection(collection, query)
+	return searchResults, err
+}
+
+func mgoFindSort(collection string, query map[string]interface{}, sort string) (searchResults map[string]interface{}, err error) {
+	q := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		err := c.Find(query).Sort(sort).One(&searchResults)
+		return nil, err
+	}
+	_, err = withCollection(collection, q)
+	return searchResults, err
+}
+
+func mgoFindSelect(collection string, query map[string]interface{}, Select map[string]interface{}) (searchResults map[string]interface{}, err error) {
+	q := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		err := c.Find(query).Select(Select).One(&searchResults)
+		return nil, err
+	}
+	_, err = withCollection(collection, q)
+	return searchResults, err
+}
+
 func mgoInsert(collection string, docs interface{}) error {
 	query := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
 		err := c.Insert(docs)

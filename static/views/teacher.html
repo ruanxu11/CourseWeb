@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    {{if .self}} 
+        <form action="/logout" method="post" >
+            <input type="submit" name="submit" value="注销"/>
+        </form>
+        我的个人主页<br>
+    {{else}}
+        {{.userInfo.name}}老师的个人主页<br>
+    {{end}}
+    id : {{.userInfo.id}}<br>
+    name : {{.userInfo.name}}<br>
+    sex : {{.userInfo.sex}}<br>
+    email : {{.userInfo.email}}<br>
+    phone : {{.userInfo.phone}}<br>
+    college : {{.userInfo.college}}<br>
+    department : {{.userInfo.department}}<br>
+    academicbackground : {{.userInfo.academicbackground}}<br>
+    academictitle : {{.userInfo.academictitle}}<br>
+    researchdirections : {{.userInfo.researchdirections}}<br>
+    introduction : {{.userInfo.introduction}}<br>
+</body>
+</html>

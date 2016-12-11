@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <form action="/user/{{.collection}}/{{.id}}/security/questions/update/by/security/questions" method="post">
+        问题1: {{.question1}}<br>
+        <input type="text" name="oldAnswer1" placeholder="请输入答案1"/> <br />
+        问题2: {{.question2}}<br>
+        <input type="text" name="oldAnswer2" placeholder="请输入答案2"/> <br />
+        问题3: {{.question3}}<br>
+        <input type="text" name="oldAnswer3" placeholder="请输入答案3"/> <br /> <br />
+
+        <input type="text" name="question1" placeholder="请输入问题1" /> <br />
+        <input type="text" name="answer1" placeholder="请输入答案1" /> <br />
+        <input type="text" name="question2" placeholder="请输入问题2" /> <br />
+        <input type="text" name="answer2" placeholder="请输入答案2" /> <br />
+        <input type="text" name="question3" placeholder="请输入问题3" /> <br />
+        <input type="text" name="answer3" placeholder="请输入答案3" /> <br />
+        <input type="submit" value="修改安全问题"/>
+    </form>
+</body>
+</html>
