@@ -7,7 +7,7 @@
 <body>
     <a href="/class/{{.id}}"><<返回教学班主页</a><br><br>
         讨论区<br><br>
-    {{if .removepower}}
+    {{if .powers.Forum}}   
         <table border="1">
             <tr>
                 <td>创建时间</td>
@@ -15,7 +15,9 @@
                 <td>标题</td>
                 <td>回复</td>
                 <td>最后修改时间</td>
-                <td>操作</td>
+                {{if .powers.ForumPostRemove}}
+                    <td>操作</td>
+                {{end}}
             </tr>
         {{range $post := .forum}}
             <tr>
@@ -24,40 +26,18 @@
                 <td><a href="/class/{{$.id}}/forum/post/{{$post.id}}">{{$post.topic}}</a></td>
                 <td>{{$post.replienum}}</td>
                 <td>{{$post.lastmodifytime}}</td>
-                <td><a href="/class/{{$.id}}/forum/remove/{{$post.id}}">删除帖子</a></td>
+                {{if $.powers.ForumPostRemove}}
+                    <td><a href="/class/{{$.id}}/forum/remove/{{$post.id}}">删除帖子</a></td>
+                {{end}}
             </tr>
         {{end}}
+        {{if .powers.ForumPost}}
             <tr>
-                <td colspan="6">
-                <form action="/class/{{.id}}/forum/add" method="post">
-                    <input type="text" name="topic" placeholder="帖子标题" /><br>
-                    <textarea style="height: 400px; width: 600px" name="content" placeholder="帖子内容"></textarea><br>
-                    <input type="submit" value="发贴"/>
-                </form>
-                </td>
-            </tr>
-        </table>
-    {{else}}
-        <table border="1">
-            <tr>
-                <td>创建时间</td>
-                <td>发帖人</td>
-                <td>标题</td>
-                <td>回复</td>
-                <td>最后修改时间</td>
-            </tr>
-        {{range $post := .forum}}
-            <tr>
-                <td>{{$post.createtime}}</td>
-                <td><a href="/user/{{$post.postercollection}}/{{$post.posterid}}">{{$post.poster}}</a></td>
-                <td><a href="/class/{{$.id}}/forum/post/{{$post.id}}">{{$post.topic}}</a></td>
-                <td>{{$post.replienum}}</td>
-                <td>{{$post.lastmodifytime}}</td>
-            </tr>
-        {{end}}
-        {{if .postpower}}
-            <tr>
-                <td colspan="5">
+                {{if .powers.ForumPostRemove}}
+                    <td colspan="6">
+                {{else}}
+                    <td colspan="5">
+                {{end}}
                 <form action="/class/{{.id}}/forum/add" method="post">
                     <input type="text" name="topic" placeholder="帖子标题" /><br>
                     <textarea style="height: 400px; width: 600px" name="content" placeholder="帖子内容"></textarea><br>

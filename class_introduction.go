@@ -56,41 +56,22 @@ func classIntroductionHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		power := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			log.Println(typesInClass)
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
 		koala.Render(w, "class_introduction.html", map[string]interface{}{
 			"title":        courseWeb,
 			"id":           id,
 			"introduction": introduction,
-			"permission":   true,
-			"power":        power,
+			"powers":       getPowersInClass(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/introduction", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		introduction := p.ParamPost["introduction"][0]
-		power := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			log.Println(typesInClass)
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["IntroductionUpdate"] {
+			koala.NotFound(w)
 			return
 		}
+		introduction := p.ParamPost["introduction"][0]
 		err := updateClassIntroduction(id, introduction)
 		if err != nil {
 			log.Println(err)

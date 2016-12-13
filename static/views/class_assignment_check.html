@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <a href="/class/{{.id}}">返回教学班主页</a><br><br>
+        批改作业<br><br>
+    作业创建时间：{{.assignment.time}}<br><br>
+    作业截止时间：{{.assignment.deadline}}<br><br>
+    作业要求：{{.assignment.topic}}<br><br>
+    作业分值：{{.assignment.maxscore}}<br><br>
+    作业类型：{{.assignment.type}}<br><br>
+    附件：
+        {{if ne .assignment.attachpath ""}}
+            <a href="{{.assignment.attachpath}}">{{.assignment.attachname}}</a>
+        {{end}}<br><br>
+    <form method="post">
+    <table border="1">
+            <tr>
+                <td>学号</td>
+                <td>姓名</td>
+                <td>作业内容</td>
+                <td>附件</td>
+                <td>作业状态</td>
+                <td>得分</td>
+                <td>评价</td>
+            </tr>
+    {{range $assignmentDo:=.assignmentDos}}
+     <tr>
+        <td><input type="text" name="studentid" value="{{$assignmentDo.studentid}}"></td>
+        <td>{{$assignmentDo.student}}</td>
+        <td>{{$assignmentDo.content}}</td>
+        <td><a href="{{$assignmentDo.attachpath}}">{{$assignmentDo.attachname}}</a></td>
+        <td>{{$assignmentDo.state}}</td>
+        <td><input type="text" name="score" value="{{$assignmentDo.score}}"></td>
+        <td><textarea name="comment" style="height:200px;width:200px;">{{$assignmentDo.comment}}</textarea></td>
+     </tr>
+    {{end}}
+    </table>
+        <input type="submit" value="提交批改"/>
+    </form>
+    <!--作业状态：
+    {{if .assignmentDo}}
+        {{.assignmentDo.state}}<br><br>
+        上传的附件：
+        <a href="{{.assignmentDo.attachpath}}">{{.assignmentDo.attachname}}</a>
+    {{else}}
+        未完成
+    {{end}}
+    
+    <br><br>
+    <form action="/class/{{.id}}/assignment/do/{{.assignmentid}}" method="post" enctype ="multipart/form-data">
+        <textarea style="width: 800px;height: 600px;" name="content" placeholder="说点对作业的感受吧～">{{.assignmentDo.content}}</textarea><br>
+        <input type="file" name="file"/>
+        <input type="submit" value="提交作业"/>
+    </form>-->
+
+</body>
+</html>

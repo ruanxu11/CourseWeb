@@ -5,24 +5,86 @@
 </head>
 
 <body>
-    {{if .self}} 
+    {{if .login}} 
         <form action="/logout" method="post" >
-            <input type="submit" name="submit" value="注销"/>
+            <input type="submit" value="注销"/>
+        </form>
+    {{end}}
+    {{if .self}}
+        <form action="/user/{{.collection}}/{{.user._id}}/security/questions/update/by/password" method="get">
+            <input type="submit" value="通过密码修改安全问题"/>
+        </form>
+
+        <form action="/user/{{.collection}}/{{.user._id}}/security/questions/update/by/security/questions" method="get">
+            <input type="submit" value="验证并修改安全问题"/>
+        </form>
+        
+        <form action="/user/{{.collection}}/{{.user._id}}/password/update" method="post">
+            <input type="text" name="oldPassword" placeholder="请输入旧密码" value="{{.user._id}}"/> <br />
+            <input type="text" name="newPassword" placeholder="请输入新密码" value="{{.user._id}}"/> <br />
+            <input type="text" name="newPasswordR" placeholder="请再次输入新密码" value="{{.user._id}}"/> <br />
+            <input type="submit" value="修改密码"/>
         </form>
         我的个人主页<br>
+        <form action="/user/{{.collection}}/{{.user._id}}/update" method="post" >
+            工号 : <input type="text" value="{{.user._id}}" disabled/> <br />
+            姓名 : <input type="text" value="{{.user.name}}" disabled/> <br />
+            性别 : <input type="text" value="{{.user.sex}}" disabled/> <br />
+            电子邮箱 : <input type="text" name="email" value="{{.user.email}}"/> <br />
+            联系电话 : <input type="text" name="phone" value="{{.user.phone}}"/> <br />
+            学院 : <input type="text" value="{{.user.college}}" disabled/> <br />
+            系 : <input type="text" value="{{.user.department}}" disabled/> <br />
+            学历 : <input type="text" value="{{.user.academicbackground}}" disabled/> <br />
+            职称 : <input type="text" value="{{.user.academictitle}}" disabled/> <br />
+            研究方向 : <input type="text" value="{{.user.researchdirections}}" disabled/> <br />
+            个人简介 : <textarea style="height: 200px; width: 300px" name="introduction">{{.user.introduction}}</textarea><br />
+            <input type="submit" value="修改个人信息"/>
+        </form>
+        <br>我正在上的课程<br>
+        <table  border="1">
+            <tr>
+                <td>学年</td>
+                <td>学期</td>
+                <td>课程代码</td>
+                <td>课程名称</td>
+                <td>上课时间和地点</td>
+                <td>老师</td>
+                <td>助教</td>
+            </tr>
+        {{range $class:=.classes}}
+            <tr>
+                <td>{{$class.year}}</td>
+                <td>{{$class.semester}}</td>
+                <td>{{$class.courseid}}</td>
+                <td><a href="/class/{{$class._id}}">{{$class.course}}</a></td>
+                <td>
+                    {{range $classroom := $class.classrooms}}
+                        {{$classroom.time}} {{$classroom.position}} <br>
+                    {{end}}
+                </td>
+                <td>
+                    {{range $teacher := $class.teachers}}
+                        <a href="/user/teacher/{{$teacher.id}}">{{$teacher.name}}</a>
+                    {{end}}
+                </td>
+                <td>
+                    <a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a>
+                </td>
+            </tr>
+        {{end}}
     {{else}}
-        {{.userInfo.name}}老师的个人主页<br>
+        {{.user.name}}老师的个人主页<br>
+        工号 : {{.user._id}}<br>
+        姓名 : {{.user.name}}<br>
+        性别 : {{.user.sex}}<br>
+        电子邮箱 : {{.user.email}}<br>
+        联系电话 : {{.user.phone}}<br>
+        学院 : {{.user.college}}<br>
+        系 : {{.user.department}}<br>
+        学历 : {{.user.academicbackground}}<br>
+        职称 : {{.user.academictitle}}<br>
+        研究方向 : {{.user.researchdirections}}<br>
+        个人简介 : {{.user.introduction}}<br>
     {{end}}
-    id : {{.userInfo.id}}<br>
-    name : {{.userInfo.name}}<br>
-    sex : {{.userInfo.sex}}<br>
-    email : {{.userInfo.email}}<br>
-    phone : {{.userInfo.phone}}<br>
-    college : {{.userInfo.college}}<br>
-    department : {{.userInfo.department}}<br>
-    academicbackground : {{.userInfo.academicbackground}}<br>
-    academictitle : {{.userInfo.academictitle}}<br>
-    researchdirections : {{.userInfo.researchdirections}}<br>
-    introduction : {{.userInfo.introduction}}<br>
 </body>
 </html>

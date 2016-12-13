@@ -86,40 +86,24 @@ func classAnnouncementHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		power := false
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
 		koala.Render(w, "class_announcement.html", map[string]interface{}{
 			"title":         courseWeb,
 			"id":            id,
 			"announcements": announcements,
-			"permission":    true,
-			"power":         power,
+			"powers":        getPowersInClass(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/announcement", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		submit := p.ParamPost["submit"][0]
 		id := p.ParamUrl["id"]
-		power := false
 		time := p.ParamPost["time"][0]
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
-			koala.NotFound(w)
-			return
-		}
+		powers := getPowersInClass(r, id)
 		if submit == "删除课程公告" {
+			if !powers["AnnouncementRemove"] {
+				koala.NotFound(w)
+				return
+			}
 			err := removeClassAnnouncementByTime(id, time)
 			if err != nil {
 				log.Println(err)
@@ -128,6 +112,10 @@ func classAnnouncementHandlers() {
 				koala.Relocation(w, "/class/"+id+"/announcement", "删除课程公告成功", "success")
 			}
 		} else if submit == "更改课程公告" {
+			if !powers["AnnouncementUpdate"] {
+				koala.NotFound(w)
+				return
+			}
 			title := p.ParamPost["title"][0]
 			content := p.ParamPost["content"][0]
 			err := updateClassAnnouncementByTime(id, time, title, content)
@@ -142,20 +130,13 @@ func classAnnouncementHandlers() {
 
 	koala.Post("/class/:id/announcement/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		title := p.ParamPost["title"][0]
-		content := p.ParamPost["content"][0]
-		power := false
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["AnnouncementAdd"] {
 			koala.NotFound(w)
 			return
 		}
+		title := p.ParamPost["title"][0]
+		content := p.ParamPost["content"][0]
 		err := addClassAnnouncement(id, &Announcement{
 			Title:   title,
 			Content: content,

@@ -1,10 +1,14 @@
 package koala
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
+	"os"
+	"path"
 	"strings"
 )
 
@@ -137,4 +141,45 @@ func RunWithLog(addr string) {
 	if err := http.ListenAndServe(addr, nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
+}
+
+var VaildSuffix = []string{
+	".doc", ".docx",
+	".ppt", ".pptx",
+	".xls", ".xlsx",
+	".txt", ".pdf",
+}
+
+func SavePostFile(r *http.Request, key string, dir string) (string, string, string, error) {
+	file, handle, err := r.FormFile(key)
+	if err != nil {
+		return "", "", "", err
+	}
+	filename := handle.Filename
+	suffix := path.Ext(filename)
+	flag := false
+	for _, s := range VaildSuffix {
+		if suffix == s {
+			flag = true
+		}
+	}
+	if !flag {
+		return "", "", "", errors.New("不支持的文件后缀名")
+	}
+	attachPath := dir + filename
+	filepath := "./static/upload" + dir + filename
+	os.MkdirAll(path.Dir(filepath), 0777)
+	f, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Println(err)
+		return "", "", "", err
+	}
+	_, err = io.Copy(f, file)
+	if err != nil {
+		log.Println(err)
+		return "", "", "", err
+	}
+	defer f.Close()
+	defer file.Close()
+	return attachPath, filename, suffix, nil
 }

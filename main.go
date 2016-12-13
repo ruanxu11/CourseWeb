@@ -2,25 +2,26 @@ package main
 
 var courseWeb = "浙江大学课程网站系统"
 var globalPowers = map[string][]string{
-	"PowerForum":                  []string{"all"},
-	"PowerForumPost":              []string{"class"},
-	"PowerForumReply":             []string{"class"},
-	"PowerForumPostRemove":        []string{"teacher", "teachingAssistant"},
-	"PowerMaterialAdd":            []string{"teacher"},
-	"PowerMaterialRemove":         []string{"teacher"},
-	"PowerMaterialDownload":       []string{"class"},
-	"PowerAssignmentAdd":          []string{"teacher", "teachingAssistant"},
-	"PowerAssignmentRemove":       []string{"teacher", "teachingAssistant"},
-	"PowerAssignmentUpdate":       []string{"teacher", "teachingAssistant"},
-	"PowerAssignmentView":         []string{"teacher", "teachingAssistant"},
-	"PowerAssignmentCheck":        []string{"teacher", "teachingAssistant"},
-	"PowerAnnouncementAdd":        []string{"teacher"},
-	"PowerAnnouncementRemove":     []string{"teacher"},
-	"PowerAnnouncementUpdate":     []string{"teacher"},
-	"PowerAnnouncementView":       []string{"teacher"},
-	"PowerTeachingSyllabusUpdate": []string{"teacher"},
-	"PowerIntroductionUpdate":     []string{"teacher"},
-	"PowerStudentList":            []string{"teacher", "teachingAssistant"},
+	"Forum":                  []string{"teacher", "teachingAssistant", "student", "otherTeacher", "otherTeachingAssistant", "otherStudent", "others"},
+	"ForumPost":              []string{"teacher", "teachingAssistant", "student"},
+	"ForumReply":             []string{"teacher", "teachingAssistant", "student"},
+	"ForumPostRemove":        []string{"teacher", "teachingAssistant"},
+	"MaterialAdd":            []string{"teacher"},
+	"MaterialRemove":         []string{"teacher"},
+	"MaterialDownload":       []string{"teacher", "teachingAssistant", "student"},
+	"AssignmentAdd":          []string{"teacher", "teachingAssistant"},
+	"AssignmentRemove":       []string{"teacher", "teachingAssistant"},
+	"AssignmentUpdate":       []string{"teacher", "teachingAssistant"},
+	"AssignmentView":         []string{"teacher", "teachingAssistant", "student"},
+	"AssignmentCheck":        []string{"teacher", "teachingAssistant"},
+	"AssignmentDo":           []string{"student"},
+	"AnnouncementAdd":        []string{"teacher"},
+	"AnnouncementRemove":     []string{"teacher"},
+	"AnnouncementUpdate":     []string{"teacher"},
+	"AnnouncementView":       []string{"teacher", "student"},
+	"TeachingSyllabusUpdate": []string{"teacher"},
+	"IntroductionUpdate":     []string{"teacher"},
+	"StudentList":            []string{"teacher", "teachingAssistant", "student"},
 }
 
 func main() {
@@ -69,5 +70,6 @@ func main() {
 	// 	ID:   "3140102431",
 	// 	Name: "徐亮",
 	// })
+	// initStudents()
 	RouteStart()
 }

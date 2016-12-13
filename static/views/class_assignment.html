@@ -7,7 +7,7 @@
 <body>
     <a href="/class/{{.id}}"><<返回教学班主页</a><br><br>
         作业<br><br>
-    {{if .addpower}}
+    {{if .powers.AssignmentAdd}}
         <form action="/class/{{.id}}/assignment/add" method="post" enctype ="multipart/form-data">
             <textarea style="height: 400px; width: 600px" name="content"></textarea><br>
             <input type="text" name="ddl" placeholder="作业截止时间" />
@@ -17,7 +17,7 @@
             <input type="submit" value="新增作业"/>
         </form><br>
     {{end}}
-    {{if .viewpower}}
+    {{if .powers.AssignmentView}}
         <table border="1">
             <tr>
                 <td>作业发布时间</td>
@@ -26,6 +26,18 @@
                 <td>作业分值</td>
                 <td>作业类型</td>
                 <td>附件</td>
+                {{if .powers.AssignmentDo}}
+                <td>作业链接</td>
+                {{end}}
+                {{if $.powers.AssignmentCheck}}
+                    <td>批改作业</td>
+                {{end}}
+                {{if .powers.AssignmentRemove}}
+                <td>删除</td>
+                {{end}}
+                <!--{{if .powers.AssignmentUpdate}}
+                <td>更改</td>
+                {{end}}-->
             </tr>
         {{range $assignment := .assignments}}
             <tr>
@@ -37,9 +49,22 @@
                 <td>{{$assignment.type}}</td>
                 <td>
                     {{if ne $assignment.attachpath ""}}
-                        <a href="{{$assignment.attachpath}}">下载附件</a>
+                        <a href="{{$assignment.attachpath}}">{{$assignment.attachname}}</a>
                     {{end}}
                 </td>
+                {{if $.powers.AssignmentDo}}
+                    <td><a href="/class/{{$.id}}/assignment/do/{{$assignment.id}}">查看作业</a></td>
+                {{end}}
+                {{if $.powers.AssignmentCheck}}
+                    <td><a href="/class/{{$.id}}/assignment/check/{{$assignment.id}}">批改作业</a></td>
+                {{end}}
+                {{if $.powers.AssignmentRemove}}
+                    <td><a href="/class/{{$.id}}/assignment/remove/{{$assignment.id}}">删除</a></td>
+                {{end}}
+                <!--AssignmentUpdate 功能需要前端支持，懒得改了-->
+                <!--{{if $.powers.AssignmentUpdate}}
+                <td><a href="/class/{{$.id}}/assignment/update/{{$assignment.id}}">更改</a></td>
+                {{end}}-->
             </tr>
         {{end}}
         </table>

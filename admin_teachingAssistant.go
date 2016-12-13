@@ -56,11 +56,12 @@ func adminTeachingAssistantHandlers() {
 			})
 		case "增加":
 			err := addTeachingAssistant(&TeachingAssistant{
-				ID:    p.ParamPost["_id"][0],
-				Name:  p.ParamPost["name"][0],
-				Sex:   p.ParamPost["sex"][0],
-				Email: p.ParamPost["email"][0],
-				Phone: p.ParamPost["phone"][0],
+				ID:       p.ParamPost["_id"][0],
+				Password: p.ParamPost["_id"][0],
+				Name:     p.ParamPost["name"][0],
+				Sex:      p.ParamPost["sex"][0],
+				Email:    p.ParamPost["email"][0],
+				Phone:    p.ParamPost["phone"][0],
 			})
 			if err != nil {
 				koala.Relocation(w, "/admin/teachingAssistant", "添加助教失败", "error")

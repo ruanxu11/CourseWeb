@@ -67,6 +67,7 @@ func adminTeacherHandlers() {
 		case "增加":
 			err := addTeacher(&Teacher{
 				ID:                 p.ParamPost["_id"][0],
+				Password:           p.ParamPost["_id"][0],
 				Name:               p.ParamPost["name"][0],
 				Sex:                p.ParamPost["sex"][0],
 				Email:              p.ParamPost["email"][0],

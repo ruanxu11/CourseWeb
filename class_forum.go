@@ -161,11 +161,6 @@ func getClassPost(id string, postid string) (post map[string]interface{}, err er
 					"_id.id": postid,
 				},
 			},
-			{
-				"$sort": bson.M{
-					"_id.time": 1,
-				},
-			},
 		})
 		iter := pipe.Iter()
 		tag := bson.M{}
@@ -188,47 +183,29 @@ func classForumHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		postpower := false
-		removepower := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			log.Println(typesInClass)
-			if typesInClass == "teacher" {
-				removepower = true
-			}
-			postpower = true
-		}
 		koala.Render(w, "class_forum.html", map[string]interface{}{
-			"title":       courseWeb,
-			"id":          id,
-			"forum":       forum,
-			"permission":  true,
-			"postpower":   postpower,
-			"removepower": removepower,
+			"title":  courseWeb,
+			"id":     id,
+			"forum":  forum,
+			"powers": getPowersInClass(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/forum/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
+		powers := getPowersInClass(r, id)
+		if !powers["ForumPost"] {
+			koala.NotFound(w)
+			return
+		}
 		topic := p.ParamPost["topic"][0]
 		content := p.ParamPost["content"][0]
-		power := false
 		var poster, PosterID, PosterCollection string
 		if koala.ExistSession(r, "sessionID") {
 			session := koala.GetSession(r, w, "sessionID")
 			poster = session.Values["name"].(string)
 			PosterID = session.Values["id"].(string)
 			PosterCollection = session.Values["collection"].(string)
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
-			koala.NotFound(w)
-			return
 		}
 		err := addClassPost(id, &Post{
 			ReplieNum:        0,
@@ -248,19 +225,12 @@ func classForumHandlers() {
 
 	koala.Get("/class/:id/forum/remove/:postid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		power := false
-		postid := p.ParamUrl["postid"]
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["ForumPostRemove"] {
 			koala.NotFound(w)
 			return
 		}
+		postid := p.ParamUrl["postid"]
 		err := removeClassPostByID(id, postid)
 		if err != nil {
 			log.Println(err)
@@ -268,34 +238,6 @@ func classForumHandlers() {
 		} else {
 			koala.Relocation(w, "/class/"+id+"/forum", "删除帖子成功", "success")
 		}
-	})
-
-	koala.Get("/class/:id/forum", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
-		id := p.ParamUrl["id"]
-		forum, err := getClassForum(id)
-		if err != nil {
-			koala.NotFound(w)
-			return
-		}
-		postpower := false
-		removepower := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			log.Println(typesInClass)
-			if typesInClass == "teacher" {
-				removepower = true
-			}
-			postpower = true
-		}
-		koala.Render(w, "class_forum.html", map[string]interface{}{
-			"title":       courseWeb,
-			"id":          id,
-			"forum":       forum,
-			"postpower":   postpower,
-			"removepower": removepower,
-		})
 	})
 
 	koala.Get("/class/:id/forum/post/:postid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
@@ -307,46 +249,29 @@ func classForumHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		postpower := false
-		removepower := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			log.Println(typesInClass)
-			if typesInClass == "teacher" {
-				removepower = true
-			}
-			postpower = true
-		}
 		koala.Render(w, "class_forum_post.html", map[string]interface{}{
-			"title":       courseWeb,
-			"id":          id,
-			"post":        post,
-			"postpower":   postpower,
-			"removepower": removepower,
+			"title":  courseWeb,
+			"id":     id,
+			"post":   post,
+			"powers": getPowersInClass(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/forum/post/:postid/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
+		powers := getPowersInClass(r, id)
+		if !powers["ForumReply"] {
+			koala.NotFound(w)
+			return
+		}
 		postid := p.ParamUrl["postid"]
 		content := p.ParamPost["content"][0]
-		power := false
 		var poster, PosterID, PosterCollection string
 		if koala.ExistSession(r, "sessionID") {
 			session := koala.GetSession(r, w, "sessionID")
 			poster = session.Values["name"].(string)
 			PosterID = session.Values["id"].(string)
 			PosterCollection = session.Values["collection"].(string)
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
-			koala.NotFound(w)
-			return
 		}
 		err := addClassPostReply(id, postid, &Reply{
 			Poster:           poster,
@@ -364,20 +289,13 @@ func classForumHandlers() {
 
 	koala.Get("/class/:id/forum/post/:postid/remove/:replyid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		power := false
-		postid := p.ParamUrl["postid"]
-		replyid := p.ParamUrl["replyid"]
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["ForumPostRemove"] {
 			koala.NotFound(w)
 			return
 		}
+		postid := p.ParamUrl["postid"]
+		replyid := p.ParamUrl["replyid"]
 		err := removeClassPostReplyByID(id, postid, replyid)
 		if err != nil {
 			log.Println(err)

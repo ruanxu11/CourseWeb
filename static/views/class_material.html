@@ -7,41 +7,30 @@
 <body>
     <a href="/class/{{.id}}">返回教学班主页</a><br><br>
         课程资料<br><br>
-    {{if .power}}
+    {{if .powers.MaterialAdd}}
         <form action="/class/{{.id}}/material/add" method="post" enctype ="multipart/form-data">
             <input type="file" name="material"/>
             <input type="submit" value="新增课程资料"/>
         </form><br>
-
+    {{end}}
+    {{if .powers.MaterialDownload}}
         <table border="1">
             <tr>
                 <td>上传时间</td>
                 <td>资料名称</td>
                 <td>类型</td>
+                {{if .powers.MaterialRemove}}
                 <td>操作</td>
+                {{end}}
             </tr>
         {{range $material := .materials}}
             <tr>
                 <td>{{$material.time}}</td>
                 <td><a href="{{$material.path}}">{{$material.filename}}</a></td>
                 <td>{{$material.suffix}}</td>
+                {{if $.powers.MaterialRemove}}
                 <td><a href="/class/{{$.id}}/material/{{$material.time}}/remove">删除资料</a></td>
-            </form>
-            </tr>
-        {{end}}
-        </table>
-    {{else if .permission}}
-        <table border="1">
-            <tr>
-                <td>上传时间</td>
-                <td>资料名称</td>
-                <td>类型</td>
-            </tr>
-        {{range $material := .materials}}
-            <tr>
-                <td>{{$material.time}}</td>
-                <td><a href="{{$material.path}}">{{$material.filename}}</a></td>
-                <td>{{$material.suffix}}</td>
+                {{end}}
             </form>
             </tr>
         {{end}}

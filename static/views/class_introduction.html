@@ -7,13 +7,13 @@
 <body>
     <a href="/class/{{.id}}">返回教学班主页</a><br><br>
         课程介绍<br><br>
-    {{if .power}}
+    {{if .powers.IntroductionUpdate}}
         <form action="/class/{{.id}}/introduction" method="post">
             <textarea style="height: 200px; width: 300px" name="introduction">{{.introduction}}</textarea><br>
             <input type="submit" value="更改课程介绍"/>
         </form>
-    {{else if .permission}}
-            {{.introduction}}
+    {{else }}
+        {{.introduction}}
     {{end}}
 </body>
 </html>

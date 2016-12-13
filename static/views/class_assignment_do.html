@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+    <a href="/class/{{.id}}">返回教学班主页</a><br><br>
+        做作业<br><br>
+    作业创建时间：{{.assignment.time}}<br><br>
+    作业截止时间：{{.assignment.deadline}}<br><br>
+    作业要求：{{.assignment.topic}}<br><br>
+    作业分值：{{.assignment.maxscore}}<br><br>
+    作业类型：{{.assignment.type}}<br><br>
+    附件：
+        {{if ne .assignment.attachpath ""}}
+            <a href="{{.assignment.attachpath}}">{{.assignment.attachname}}</a>
+        {{end}}<br><br>
+    作业状态：
+    {{if .assignmentDo}} <!--如果已经做了作业-->
+        {{.assignmentDo.state}}<br><br>
+        {{if eq .assignmentDo.state "已批改"}}
+            批改人：{{.assignmentDo.checker}}<br><br>
+            得分：{{.assignmentDo.score}}<br><br>
+            评价：{{.assignmentDo.comment}}<br><br>
+        {{else}}
+            上传的附件：
+            <a href="{{.assignmentDo.attachpath}}">{{.assignmentDo.attachname}}</a><br><br>
+            <form action="/class/{{.id}}/assignment/do/{{.assignmentid}}" method="post" enctype ="multipart/form-data">
+                <textarea style="width: 800px;height: 600px;" name="content" placeholder="说点对作业的感受吧～">{{.assignmentDo.content}}</textarea><br>
+                <input type="file" name="file"/>
+                <input type="submit" value="提交作业"/>
+            </form>
+        {{end}}
+    {{else}}
+        未完成
+        <br><br>
+        <form action="/class/{{.id}}/assignment/do/{{.assignmentid}}" method="post" enctype ="multipart/form-data">
+            <textarea style="width: 800px;height: 600px;" name="content" placeholder="说点对作业的感受吧～">{{.assignmentDo.content}}</textarea><br>
+            <input type="file" name="file"/>
+            <input type="submit" value="提交作业"/>
+        </form>
+    {{end}}
+
+</body>
+</html>

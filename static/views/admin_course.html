@@ -32,7 +32,7 @@
     {{range $course := .courses}}
         <tr>
             <td><a href="/course/{{$course._id}}">{{$course._id}}</a></td>
-            <td><a href="/course/{{$course._id}}">{{$course.name}}</a></td>
+            <td>{{$course.name}}</a></td>
             <td>{{$course.college}}</td>
             <td>{{$course.credit}}</td>
             <td>{{$course.hoursperweek}}</td>

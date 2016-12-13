@@ -1,12 +1,9 @@
 package main
 
 import (
-	"io"
 	"koala"
 	"log"
 	"net/http"
-	"os"
-	"path"
 	"time"
 
 	"labix.org/v2/mgo"
@@ -86,73 +83,26 @@ func classMaterialHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		power := false
-		log.Println("typesInClass:")
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
 		koala.Render(w, "class_material.html", map[string]interface{}{
-			"title":      courseWeb,
-			"id":         id,
-			"materials":  materials,
-			"permission": true,
-			"power":      power,
+			"title":     courseWeb,
+			"id":        id,
+			"materials": materials,
+			"powers":    getPowersInClass(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/material/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		power := false
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["MaterialAdd"] {
 			koala.NotFound(w)
 			return
 		}
-		file, handle, err := r.FormFile("material")
-		if err != nil {
-			log.Println(err)
-			koala.Relocation(w, "/class/"+id+"/material", "新增课程资料失败", "error")
-			return
-		}
-		filename := handle.Filename
-		suffix := path.Ext(filename)
-		log.Println(suffix)
-		courseid, err := getCourseID(id)
-		if err != nil {
-			log.Println(err)
-			koala.Relocation(w, "/class/"+id+"/material", "不存在这门课程", "error")
-			return
-		}
-		mgofilepath := "/material/" + courseid + "/" + filename
-		filepath := "./static/upload/material/" + courseid + "/" + filename
-		os.MkdirAll(path.Dir(filepath), 0777)
-		f, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
-		if err != nil {
-			log.Println(err)
-			koala.Relocation(w, "/class/"+id+"/material", "新增课程资料失败", "error")
-			return
-		}
-		_, err = io.Copy(f, file)
-		if err != nil {
-			log.Println(err)
-			koala.Relocation(w, "/class/"+id+"/material", "新增课程资料失败", "error")
-			return
-		}
-		defer f.Close()
-		defer file.Close()
+		AttachPath, filename, suffix, err := koala.SavePostFile(r, "file", "/assignment/"+id+"/")
+
 		err = addClassMaterial(id, &Material{
 			Filename: filename,
-			Path:     mgofilepath,
+			Path:     AttachPath,
 			Suffix:   suffix,
 		})
 		if err != nil {
@@ -165,19 +115,12 @@ func classMaterialHandlers() {
 
 	koala.Get("/class/:id/material/:time/remove", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		power := false
-		time := p.ParamUrl["time"]
-		if koala.ExistSession(r, "sessionID") {
-			session := koala.GetSession(r, w, "sessionID")
-			typesInClass := getTypeInClass(id, session.Values["collection"].(string), session.Values["id"].(string))
-			if typesInClass == "teacher" {
-				power = true
-			}
-		}
-		if !power {
+		powers := getPowersInClass(r, id)
+		if !powers["MaterialRemove"] {
 			koala.NotFound(w)
 			return
 		}
+		time := p.ParamUrl["time"]
 		err := removeClassMaterialByTime(id, time)
 		if err != nil {
 			log.Println(err)

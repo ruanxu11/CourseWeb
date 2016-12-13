@@ -23,7 +23,7 @@ type SecurityQuestion struct {
 func imitateLogin() {
 	v := url.Values{}
 	v.Set("ID", "3140102431")
-	v.Set("Password", "3140102431")
+	v.Set("Password", "2431")
 	v.Set("Type", "student")
 	body := ioutil.NopCloser(strings.NewReader(v.Encode())) //把form数据编下码
 	client := &http.Client{}
@@ -142,13 +142,10 @@ func updateSecurityQuestionsBySecurityQuestions(collection string, id string, ol
 	return nil
 }
 
-func getUserInfo(collection string, id string) (*map[string]interface{}, error) {
-	if collection == "student" {
-		return getStudentInfo(collection, id)
-	} else if collection == "teacher" {
-		return getTeacherInfo(collection, id)
-	} else if collection == "teachingAssistant" {
-		return getTeachingAssistantInfo(collection, id)
+func getUser(collection string, id string) (map[string]interface{}, error) {
+	if collection == "student" || collection == "teacher" || collection == "teachingAssistant" {
+		return mgoFind(collection,
+			bson.M{"_id": id})
 	}
 	return nil, errors.New("类型错误")
 }
@@ -200,7 +197,7 @@ func userHandlers() {
 	koala.Get("/user/:collection/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		collection := p.ParamUrl["collection"]
 		id := p.ParamUrl["id"]
-		userInfo, err := getUserInfo(collection, id)
+		user, err := getUser(collection, id)
 		if err != nil {
 			koala.NotFound(w)
 			return
@@ -213,11 +210,17 @@ func userHandlers() {
 				self = true
 			}
 		}
+		var classes []map[string]interface{}
+		switch user["classes"].(type) {
+		case []interface{}:
+			classes, _ = getClassesByID(user["classes"].([]interface{}))
+		}
 		koala.Render(w, collection+".html", map[string]interface{}{
-			"title":      (*userInfo)["name"].(string) + "的个人主页",
+			"title":      user["name"].(string) + "的个人主页",
 			"self":       self,
 			"login":      login,
-			"userInfo":   userInfo,
+			"user":       user,
+			"classes":    classes,
 			"collection": collection,
 		})
 	})

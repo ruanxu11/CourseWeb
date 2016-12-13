@@ -5,37 +5,50 @@
 </head>
 
 <body>
-    课程名称：{{.class.course}}<br>
-    学年：{{.class.year}}<br>
-    学期：{{.class.semester}}<br>
+    课程名称：{{.class.course}}<br><br>
+    学年：{{.class.year}}<br><br>
+    学期：{{.class.semester}}<br><br>
     上课时间和地点：<br>
     {{range $classroom := .class.classrooms}}
         &nbsp&nbsp&nbsp&nbsp  {{$classroom.time}} 
         &nbsp&nbsp&nbsp&nbsp  {{$classroom.position}} <br>
-    {{end}}
-    <a href="/class/{{.class._id}}/introduction">课程介绍</a><br>
-    <a href="/class/{{.class._id}}/teachingsyllabus">课程大纲</a><br>
-    <a href="/class/{{.class._id}}/announcement">课程公告</a><br>
-    <a href="/class/{{.class._id}}/material">课件及资料</a><br>
-    <a href="/class/{{.class._id}}/assignment">作业</a><br>
-    <a href="/class/{{.class._id}}/forum">讨论区</a><br>
+    {{end}}<br>
+    <a href="/class/{{.class._id}}/introduction">课程介绍</a><br><br>
+    <a href="/class/{{.class._id}}/teachingsyllabus">课程大纲</a><br><br>
+    <a href="/class/{{.class._id}}/announcement">课程公告</a><br><br>
+    <a href="/class/{{.class._id}}/material">课件及资料</a><br><br>
+    <a href="/class/{{.class._id}}/assignment">作业</a><br><br>
+    <a href="/class/{{.class._id}}/forum">讨论区</a><br><br>
     老师：
     {{range $teacher := .class.teachers}}
         <a href="/user/teacher/{{$teacher.id}}">{{$teacher.name}}</a>
     {{end}}
     <br>
     {{if .admin}}
+        <br>
         <form action="/class/{{.class._id}}/teachingAssistant/update" method="post" >
             <input type="text" name="ID" placeholder="请输入助教ID" />
-            <input type="text" name="ID" placeholder="请输入助教姓名" />
+            <input type="text" name="Name" placeholder="请输入助教姓名" />
             <input type="submit" name="submit" value="更改助教"/>
         </form>
     {{end}}
+    <br>
     助教：<a href="/user/teachingAssistant/{{.class.teachingassistantid}}">{{.class.teachingassistant}}</a><br>
-    {{if .PowerStudentList}}
-        学生列表：<br>
+    {{if .admin}}
+        <br>
+        <form action="/class/{{.class._id}}/student/add" method="post" >
+            <input type="text" name="ID" placeholder="请输入学生ID" />
+            <input type="text" name="Name" placeholder="请输入学生姓名" />
+            <input type="submit" name="submit" value="增加学生"/>
+        </form>
+    {{end}}<br>
+    {{if .powers.StudentList}}
+        学生列表：<br><br>
         {{range $student := .class.students}}
             <a href="/user/student/{{$student.id}}">{{$student.name}}</a>
+            {{if $.admin}}
+                <a href="/class/{{$.class._id}}/student/remove/{{$student.id}}">删除</a><br>
+            {{end}}
         {{end}}
     {{end}}
     <br>

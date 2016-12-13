@@ -7,13 +7,13 @@
 <body>
     <a href="/class/{{.id}}">返回教学班主页</a><br><br>
         课程大纲<br><br>
-    {{if .power}}
+    {{if .powers.TeachingSyllabusUpdate}}
         <form action="/class/{{.id}}/teachingsyllabus" method="post">
             <textarea style="height: 200px; width: 300px" name="teachingsyllabus">{{.teachingsyllabus}}</textarea><br>
             <input type="submit" value="更改课程大纲"/>
         </form>
-    {{else if .permission}}
-            {{.teachingsyllabus}}
+    {{else}}
+        {{.teachingsyllabus}}
     {{end}}
 </body>
 </html>

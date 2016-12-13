@@ -63,8 +63,10 @@ func adminStudentHandlers() {
 				"administrationclass": p.ParamPost["administrationclass"][0],
 			})
 		case "增加":
+			id := p.ParamPost["_id"][0]
 			err := addStudent(&Student{
-				ID:                  p.ParamPost["_id"][0],
+				ID:                  id,
+				Password:            id[len(id)-4 : len(id)],
 				Name:                p.ParamPost["name"][0],
 				Sex:                 p.ParamPost["sex"][0],
 				Email:               p.ParamPost["email"][0],
@@ -75,7 +77,7 @@ func adminStudentHandlers() {
 				AdministrationClass: p.ParamPost["administrationclass"][0],
 			})
 			if err != nil {
-				koala.Relocation(w, "/admin/student", "添加学生失败", "error")
+				koala.Relocation(w, "/admin/student", "添加学生失败\n"+err.Error(), "error")
 				return
 			}
 			koala.Relocation(w, "/admin/student", "添加学生成功", "error")

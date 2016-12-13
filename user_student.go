@@ -44,7 +44,7 @@ func initStudents() {
 		if len(data) == 3 {
 			addStudent(&Student{
 				ID:       data[0],
-				Password: data[0],
+				Password: data[0][len(data[0])-4 : len(data[0])],
 				Name:     data[1],
 				College:  data[2],
 				SecurityQuestions: map[string]string{
@@ -64,7 +64,7 @@ func initStudents() {
 func addStudentByIDandName(id string, name string) {
 	student := Student{
 		ID:       id,
-		Password: id,
+		Password: id[len(id)-4 : len(id)],
 		Name:     name,
 	}
 	err := mgoInsert("student", &student)

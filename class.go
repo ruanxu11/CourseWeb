@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"koala"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -72,11 +73,6 @@ func addClasses() {
 	fmt.Println(string(data), err)
 }
 
-func addClass(class *Class) error {
-	class.ID = koala.HashString(time.Now().Format(time.UnixDate))
-	return mgoInsert("class", &class)
-}
-
 func removeClasss(selector map[string]interface{}) (*mgo.ChangeInfo, error) {
 	return mgoRemoveAll("class", selector)
 }
@@ -109,10 +105,6 @@ func getDistinctCourse() ([]map[string]interface{}, error) {
 	return mgoFindAll("course", bson.M{"_id": bson.M{"$in": courseid}})
 }
 
-func removeClass(id string) (info *mgo.ChangeInfo, err error) {
-	return mgoRemove("class", bson.M{"_id": id})
-}
-
 func getClass(id string) (map[string]interface{}, error) {
 	return mgoFind("class", bson.M{"_id": id})
 }
@@ -121,9 +113,14 @@ func getClasses() ([]map[string]interface{}, error) {
 	return mgoFindAll("class", nil)
 }
 
+func getClassesByID(idList []interface{}) ([]map[string]interface{}, error) {
+	return mgoFindAll("class", bson.M{"_id": bson.M{"$in": idList}})
+}
+
 func searchClassesSelect(selector map[string]interface{}) ([]map[string]interface{}, error) {
 	return mgoSearchSelect("class", selector)
 }
+
 func getClassesByPage(page int) ([]map[string]interface{}, error) {
 	return mgoFindByPage("class", page)
 }
@@ -137,6 +134,80 @@ func getCourseID(id string) (string, error) {
 	return class["courseid"].(string), err
 }
 
+func getClassName(id string) (string, error) {
+	class, err := mgoFindSelect("class", bson.M{"_id": id}, bson.M{"_id": 0, "course": 1})
+	return class["course"].(string), err
+}
+
+func getClassTA(id string) (interface{}, error) {
+	class, err := mgoFindSelect("class", bson.M{"_id": id}, bson.M{"_id": 0, "teachingassistantid": 1})
+	return class["teachingassistantid"], err
+}
+
+func addClass(class *Class) error {
+	class.ID = koala.HashString(time.Now().Format(time.UnixDate))
+	for i := 0; i < len(class.Teachers); i++ {
+		err := mgoUpdate("teacher",
+			bson.M{"_id": class.Teachers[i].ID},
+			bson.M{"$push": bson.M{"classes": class.ID}})
+		if err != nil {
+			return err
+		}
+	}
+	return mgoInsert("class", &class)
+}
+
+func removeClass(id string) (info *mgo.ChangeInfo, err error) {
+	class, err := getClass(id)
+	if err != nil {
+		return nil, err
+	}
+	switch class["teachers"].(type) {
+	case []TeacherInClass:
+		teachers := class["teachers"].([]TeacherInClass)
+		for i := 0; i < len(teachers); i++ {
+			mgoUpdate("teacher",
+				bson.M{"_id": teachers[i].ID},
+				bson.M{"$pull": bson.M{"classes": id}})
+		}
+	default:
+	}
+	switch class["students"].(type) {
+	case []StudentInClass:
+		students := class["teachers"].([]StudentInClass)
+		for i := 0; i < len(students); i++ {
+			mgoUpdate("student",
+				bson.M{"_id": students[i].ID},
+				bson.M{"$pull": bson.M{"classes": id}})
+		}
+	default:
+	}
+	switch class["teachingassistantid"].(type) {
+	case string:
+		teachingassistantid := class["teachingassistantid"]
+		mgoUpdate("teachingAssistant",
+			bson.M{"_id": teachingassistantid},
+			bson.M{"$pull": bson.M{"classes": id}})
+	default:
+	}
+	return mgoRemove("class", bson.M{"_id": id})
+}
+
+func updateClassTeachingAssistant(classid string, ID string, Name string) error {
+	oldTAID, err := getClassTA(classid)
+	if err == nil && oldTAID != nil {
+		mgoUpdate("teachingAssistant",
+			bson.M{"_id": oldTAID},
+			bson.M{"$pull": bson.M{"classes": classid}})
+	}
+	mgoUpdate("teachingAssistant",
+		bson.M{"_id": ID},
+		bson.M{"$push": bson.M{"classes": classid}})
+	return mgoUpdate("class",
+		bson.M{"_id": classid},
+		bson.M{"$set": bson.M{"teachingassistantid": ID, "teachingassistant": Name}})
+}
+
 func classHandlers() {
 	classIntroductionHandlers()
 	classTeachingSyllabusHandlers()
@@ -144,7 +215,8 @@ func classHandlers() {
 	classMaterialHandlers()
 	classForumHandlers()
 	classAssignmentHandlers()
-
+	classStudentHandlers()
+	classAssignmentDoHandlers()
 	koala.Get("/class/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
 		class, err := getClass(id)
@@ -153,8 +225,27 @@ func classHandlers() {
 			return
 		}
 		koala.Render(w, "class.html", map[string]interface{}{
-			"title": courseWeb,
-			"class": class,
+			"title":  courseWeb,
+			"class":  class,
+			"admin":  admincheck(w, r),
+			"powers": getPowersInClass(r, id),
 		})
+	})
+
+	koala.Post("/class/:id/teachingAssistant/update", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
+		if !admincheck(w, r) {
+			koala.NotFound(w)
+			return
+		}
+		id := p.ParamUrl["id"]
+		ID := p.ParamPost["ID"][0]
+		Name := p.ParamPost["Name"][0]
+		err := updateClassTeachingAssistant(id, ID, Name)
+		if err != nil {
+			log.Println(err)
+			koala.Relocation(w, "/class/"+id, "修改助教失败", "error")
+		} else {
+			koala.Relocation(w, "/class/"+id, "修改助教成功", "success")
+		}
 	})
 }
