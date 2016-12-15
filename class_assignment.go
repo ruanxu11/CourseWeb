@@ -162,13 +162,13 @@ func classAssignmentHandlers() {
 			"title":       courseWeb,
 			"id":          id,
 			"assignments": assignments,
-			"powers":      getPowersInClass(r, id),
+			"powers":      getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/assignment/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AssignmentAdd"] {
 			koala.NotFound(w)
 			return
@@ -204,7 +204,7 @@ func classAssignmentHandlers() {
 	koala.Get("/class/:id/assignment/remove/:assid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
 		assid := p.ParamUrl["assid"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AssignmentRemove"] {
 			koala.NotFound(w)
 			return

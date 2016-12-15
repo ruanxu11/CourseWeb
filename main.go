@@ -22,6 +22,8 @@ var globalPowers = map[string][]string{
 	"TeachingSyllabusUpdate": []string{"teacher"},
 	"IntroductionUpdate":     []string{"teacher"},
 	"StudentList":            []string{"teacher", "teachingAssistant", "student"},
+	"MakeTeam":               []string{"teacher"},
+	"PowersControl":          []string{"teacher"},
 }
 
 func main() {
@@ -71,5 +73,14 @@ func main() {
 	// 	Name: "徐亮",
 	// })
 	// initStudents()
+	// err := updateClassPowerTable("c8503371c232707818bff7b17ab9975d", map[string]uint{
+	// 	"ForumView": 0xff,
+	// 	"ForumPost": 0xf0,
+	// })
+	// res, err := getClassPowerTable("14592062082a15a1ed3fe4925096996e")
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// log.Println(res)
 	RouteStart()
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -56,9 +57,58 @@ func checkClassAssignmentDos(checker string, assignmentid string, studentids []s
 	return nil
 }
 
+func isTeamLeader(id string, sid string) bool {
+	student := make(map[string]interface{})
+	q := func(c *mgo.Collection) (*mgo.ChangeInfo, error) {
+		pipe := c.Pipe([]bson.M{
+			{
+				"$unwind": "$students",
+			},
+			{
+				"$project": bson.M{
+					"id":         "$students.id",
+					"teamleader": "$students.teamleader",
+				},
+			},
+			{
+				"$group": bson.M{
+					"_id": bson.M{
+						"id":         "$id",
+						"teamleader": "$teamleader",
+					},
+				},
+			},
+			{
+				"$match": bson.M{
+					"_id.id": sid,
+				},
+			},
+		})
+		iter := pipe.Iter()
+		tag := make(map[string]interface{})
+		iter.Next(&tag)
+		student = tag["_id"].(map[string]interface{})
+		if err := iter.Close(); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	_, err := withCollection("class", q)
+	if err != nil {
+		return false
+	}
+	log.Println(student)
+	return student["teamleader"].(bool)
+}
+
 func classAssignmentDoHandlers() {
 	koala.Get("/class/:id/assignment/do/:assignmentid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
+		powers := getPowers(r, id)
+		if !powers["AssignmentDo"] {
+			koala.NotFound(w)
+			return
+		}
 		assignmentid := p.ParamUrl["assignmentid"]
 		assignment, err := getClassAssignment(id, assignmentid)
 		if err != nil {
@@ -67,12 +117,12 @@ func classAssignmentDoHandlers() {
 			return
 		}
 		session := koala.PeekSession(r, "sessionID")
-		assignmentDo, _ := getClassAssignmentDo(assignmentid, session.Values["id"].(string))
-		powers := getPowersInClass(r, id)
-		if !powers["AssignmentDo"] {
-			koala.NotFound(w)
+		sid := session.Values["id"].(string)
+		if assignment["type"].(string) == "小组作业" && !isTeamLeader(id, sid) {
+			koala.Relocation(w, "/class/"+id+"/assignment", "组长才有权限提交作业", "warnning")
 			return
 		}
+		assignmentDo, _ := getClassAssignmentDo(assignmentid, sid)
 		koala.Render(w, "class_assignment_do.html", map[string]interface{}{
 			"title":        courseWeb,
 			"id":           id,
@@ -85,7 +135,7 @@ func classAssignmentDoHandlers() {
 	koala.Post("/class/:id/assignment/do/:assignmentid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
 		assignmentid := p.ParamUrl["assignmentid"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AssignmentDo"] {
 			koala.NotFound(w)
 			return
@@ -123,7 +173,7 @@ func classAssignmentDoHandlers() {
 			return
 		}
 		assignmentDos, _ := getClassAssignmentDos(assignmentid)
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AssignmentCheck"] {
 			koala.NotFound(w)
 			return
@@ -139,7 +189,7 @@ func classAssignmentDoHandlers() {
 
 	koala.Post("/class/:id/assignment/check/:assignmentid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AssignmentCheck"] {
 			koala.NotFound(w)
 			return

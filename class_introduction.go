@@ -60,13 +60,13 @@ func classIntroductionHandlers() {
 			"title":        courseWeb,
 			"id":           id,
 			"introduction": introduction,
-			"powers":       getPowersInClass(r, id),
+			"powers":       getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/introduction", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["IntroductionUpdate"] {
 			koala.NotFound(w)
 			return

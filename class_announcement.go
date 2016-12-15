@@ -90,7 +90,7 @@ func classAnnouncementHandlers() {
 			"title":         courseWeb,
 			"id":            id,
 			"announcements": announcements,
-			"powers":        getPowersInClass(r, id),
+			"powers":        getPowers(r, id),
 		})
 	})
 
@@ -98,7 +98,7 @@ func classAnnouncementHandlers() {
 		submit := p.ParamPost["submit"][0]
 		id := p.ParamUrl["id"]
 		time := p.ParamPost["time"][0]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if submit == "删除课程公告" {
 			if !powers["AnnouncementRemove"] {
 				koala.NotFound(w)
@@ -130,7 +130,7 @@ func classAnnouncementHandlers() {
 
 	koala.Post("/class/:id/announcement/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["AnnouncementAdd"] {
 			koala.NotFound(w)
 			return

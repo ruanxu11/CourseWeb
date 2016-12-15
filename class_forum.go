@@ -187,13 +187,13 @@ func classForumHandlers() {
 			"title":  courseWeb,
 			"id":     id,
 			"forum":  forum,
-			"powers": getPowersInClass(r, id),
+			"powers": getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/forum/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["ForumPost"] {
 			koala.NotFound(w)
 			return
@@ -225,7 +225,7 @@ func classForumHandlers() {
 
 	koala.Get("/class/:id/forum/remove/:postid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["ForumPostRemove"] {
 			koala.NotFound(w)
 			return
@@ -253,13 +253,13 @@ func classForumHandlers() {
 			"title":  courseWeb,
 			"id":     id,
 			"post":   post,
-			"powers": getPowersInClass(r, id),
+			"powers": getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/forum/post/:postid/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["ForumReply"] {
 			koala.NotFound(w)
 			return
@@ -289,7 +289,7 @@ func classForumHandlers() {
 
 	koala.Get("/class/:id/forum/post/:postid/remove/:replyid", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["ForumPostRemove"] {
 			koala.NotFound(w)
 			return

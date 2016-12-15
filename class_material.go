@@ -87,13 +87,13 @@ func classMaterialHandlers() {
 			"title":     courseWeb,
 			"id":        id,
 			"materials": materials,
-			"powers":    getPowersInClass(r, id),
+			"powers":    getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/material/add", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["MaterialAdd"] {
 			koala.NotFound(w)
 			return
@@ -115,7 +115,7 @@ func classMaterialHandlers() {
 
 	koala.Get("/class/:id/material/:time/remove", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["MaterialRemove"] {
 			koala.NotFound(w)
 			return

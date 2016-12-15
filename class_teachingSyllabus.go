@@ -60,17 +60,17 @@ func classTeachingSyllabusHandlers() {
 			koala.NotFound(w)
 			return
 		}
-		koala.Render(w, "class_teachingsyllabus.html", map[string]interface{}{
+		koala.Render(w, "class_teachingSyllabus.html", map[string]interface{}{
 			"title":            courseWeb,
 			"id":               id,
 			"teachingsyllabus": teachingsyllabus,
-			"powers":           getPowersInClass(r, id),
+			"powers":           getPowers(r, id),
 		})
 	})
 
 	koala.Post("/class/:id/teachingsyllabus", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
-		powers := getPowersInClass(r, id)
+		powers := getPowers(r, id)
 		if !powers["TeachingSyllabusUpdate"] {
 			koala.NotFound(w)
 			return

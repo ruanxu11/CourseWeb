@@ -217,6 +217,7 @@ func classHandlers() {
 	classAssignmentHandlers()
 	classStudentHandlers()
 	classAssignmentDoHandlers()
+	classPowerHandlers()
 	koala.Get("/class/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
 		class, err := getClass(id)
@@ -228,7 +229,7 @@ func classHandlers() {
 			"title":  courseWeb,
 			"class":  class,
 			"admin":  admincheck(w, r),
-			"powers": getPowersInClass(r, id),
+			"powers": getPowers(r, id),
 		})
 	})
 
