@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>{{.title}}</title>
+</head>
+
+<body>
+        设置该课程的默认权限<br><br>
+    <form action="/course/{{.id}}/powers/update" method="post">
+    <!--通过js增加表格行数，权限名只允许在指定的范围内选取，并且不能与已有的重复-->
+    <table>
+        <tr>
+            <td>权限名</td>
+            <td>管理员</td>
+            <td>本班教师</td>
+            <td>本班助教</td>
+            <td>本班学生</td>
+            <td>其他老师</td>
+            <td>其他助教</td>
+            <td>其他学生</td>
+            <td>游客</td>
+        </tr>
+        {{range $PowerGroup := .PowerTable}}
+        <tr>
+            <td>{{$PowerGroup.power}}<input type="text" name="power" value="{{$PowerGroup.power}}" hidden/>
+            </td>
+            <td>
+                {{if $PowerGroup.admin}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="128" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="128"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.teacher}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="64" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="64"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.teachingAssistant}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="32" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="32"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.student}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="16" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="16"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.otherTeacher}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="8" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="8"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.otherTeachingAssistant}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="4" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="4"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.otherStudent}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="2" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="2"/>
+                {{end}}
+            </td>
+            <td>
+                {{if $PowerGroup.others}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="1" checked/>
+                {{else}}
+                    <input type="checkbox" name="{{$PowerGroup.power}}" value="1"/>
+                {{end}}
+            </td>
+        </tr>
+        {{end}}
+        </table>
+        <input type="submit" name="submit" value="更新权限"/>
+    </form><br><br>
+    默认权限列表：
+    <table>
+        {{range $notReferedPower := .notReferedPowers}}
+        <tr>
+            <td>{{$notReferedPower}}<input type="text" name="power" value="{{$notReferedPower}}" hidden/></td>
+        </tr>
+        {{end}}
+    </table>
+</body>
+</html>

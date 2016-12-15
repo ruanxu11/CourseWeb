@@ -26,6 +26,7 @@
             <input type="submit" value="修改密码"/>
         </form>
         我的个人主页<br>
+        <a href="/user/teacher/{{.user._id}}/powers">设置我所有班级的默认权限</a><br><br>
         <form action="/user/{{.collection}}/{{.user._id}}/update" method="post" >
             工号 : <input type="text" value="{{.user._id}}" disabled/> <br />
             姓名 : <input type="text" value="{{.user.name}}" disabled/> <br />

@@ -24,6 +24,7 @@ func RouteStart() {
 	userHandlers()
 	classHandlers()
 	courseHandlers()
+	powersHandlers()
 
 	koala.Get("/forget/password/id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		koala.Render(w, "forgetPassword.html", map[string]interface{}{

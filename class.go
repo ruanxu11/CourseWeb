@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"koala"
@@ -144,6 +145,27 @@ func getClassTA(id string) (interface{}, error) {
 	return class["teachingassistantid"], err
 }
 
+func getClassTeacherID(id string) ([]string, error) {
+	class, err := mgoFindSelect("class", bson.M{"_id": id}, bson.M{"_id": 0, "teachers": 1})
+	switch class["teachers"].(type) {
+	case []interface{}:
+	default:
+		return nil, errors.New("错误的teachers类型")
+	}
+	teachers := class["teachers"].([]interface{})
+	var teacherids []string
+	for _, v := range teachers {
+		switch v.(type) {
+		case map[string]interface{}:
+		default:
+			return nil, errors.New("错误的teacher类型")
+		}
+		teacher := v.(map[string]interface{})
+		teacherids = append(teacherids, teacher[id].(string))
+	}
+	return teacherids, err
+}
+
 func addClass(class *Class) error {
 	class.ID = koala.HashString(time.Now().Format(time.UnixDate))
 	for i := 0; i < len(class.Teachers); i++ {
@@ -217,7 +239,6 @@ func classHandlers() {
 	classAssignmentHandlers()
 	classStudentHandlers()
 	classAssignmentDoHandlers()
-	classPowerHandlers()
 	koala.Get("/class/:id", func(p *koala.Params, w http.ResponseWriter, r *http.Request) {
 		id := p.ParamUrl["id"]
 		class, err := getClass(id)

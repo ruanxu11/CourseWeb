@@ -5,10 +5,8 @@
 </head>
 
 <body>
-    <a href="/class/{{.id}}">返回教学班主页</a><br><br>
-        设置班级权限<br><br>
-    {{if .powers.PowersControl}}
-    <form action="/class/{{$.id}}/powers/update" method="post">
+        设置我所有班级的默认权限<br><br>
+    <form action="/user/teacher/{{.id}}/powers/update" method="post">
     <!--通过js增加表格行数，权限名只允许在指定的范围内选取，并且不能与已有的重复-->
     <table>
         <tr>
@@ -84,22 +82,16 @@
             </td>
         </tr>
         {{end}}
+        </table>
+        <input type="submit" name="submit" value="更新权限"/>
+    </form><br><br>
+    默认权限列表：
+    <table>
         {{range $notReferedPower := .notReferedPowers}}
         <tr>
             <td>{{$notReferedPower}}<input type="text" name="power" value="{{$notReferedPower}}" hidden/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="128" checked/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="64" checked/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="32"/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="16"/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="8"/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="4"/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="2"/></td>
-            <td><input type="checkbox" name="{{$notReferedPower}}" value="1"/></td>
         </tr>
         {{end}}
-        </table>
-        <input type="submit" name="submit" value="更新权限"/>
-    </form>
-    {{end}}
+    </table>
 </body>
 </html>
