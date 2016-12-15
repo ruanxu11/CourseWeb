@@ -7,7 +7,6 @@
 <body>
     <a href="/class/{{.id}}"><<返回教学班主页</a><br><br>
         作业<br><br>
-        {{.powers}}
     {{if .powers.AssignmentAdd}}
         <form action="/class/{{.id}}/assignment/add" method="post" enctype ="multipart/form-data">
             <textarea style="height: 400px; width: 600px" name="content"></textarea><br>
