@@ -21,9 +21,17 @@
 
 </head>
 
-<body>
-    <div id="head"></div><hr>
-    <div id="nav"></div><hr>
+<body style="background-color:blue">
+    <div style="width:80%;background-color:white;margin:0 auto">
+        <div id="head"></div><hr>
+        <div id="nav"></div><hr>
+        <div id="login" style="width:20%"></div><hr>
+        <div id="contact" style="width:20%;margin:0 auto"></div><hr>
+        <div id="homework"></div><hr>
+        <div id="forum" style="width:80%"></div><hr>
+        <div id="tiezi" style="width:80%"></div><hr>
+        <div id="respond" style="width:80%"></div><hr>
+    </div>
     <script type="text/babel">
         {/*标题图片使用演示*/}
         ReactDOM.render(head,$("#head")[0]);
@@ -33,6 +41,22 @@
             <span link="test.html">老师</span>
             <span link="test.html">学生</span>
         </Navigation>,$("#nav")[0]);
+
+        ReactDOM.render(<Login></Login>,$("#login")[0]);
+        ReactDOM.render(<Contact></Contact>,$("#contact")[0]);
+        ReactDOM.render(<Homework></Homework>,$("#homework")[0]);
+        ReactDOM.render(<Forum>
+            <tr><td>夏爽</td><a href="1"><td>UML怎么画</td></a><td>10</td><td>2016</td></tr>
+            <tr><td>徐亮</td><a href="2"><td>学习有何意义</td></a><td>10</td><td>2016</td></tr>
+        </Forum>,$("#forum")[0]);
+
+        ReactDOM.render(<Tiezi title="时间过得真快">
+            <tr><td width="25%">夏爽</td><td>2016过的真快</td></tr>
+            <tr><td>某年某月某日</td><td ></td></tr>
+            <tr><td>徐亮</td><td>2017就要来了</td></tr>
+            <tr><td>某年某月某日</td><td></td></tr>
+        </Tiezi>,$("#tiezi")[0]);
+        ReactDOM.render(<Respond link="123"></Respond>,$("#respond")[0]);
     </script>
    
 </body>
