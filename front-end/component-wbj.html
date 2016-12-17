@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>CourseWebPage</title>
+<meta name="keywords" content=""/>
+<meta name="description" content=""/>
+<meta name="viewport" content="width=device-width"/>
+
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<script src="http://cdn.bootcss.com/react/15.4.1/react.min.js"></script>
+<script src="http://cdn.bootcss.com/react/15.4.1/react-dom.min.js"></script>
+<script src="http://cdn.bootcss.com/react-bootstrap/0.30.7/react-bootstrap.min.js"></script>
+<script src="browser.min.js"></script>
+<script type="text/babel">
+</script>
+</head>
+
+<body>
+    <!-- 课程公告（如何把按钮放到右边？） -->
+    
+    <div id="header"></div>
+    <div id="notice"></div>
+    <div id="button"></div>
+    <script type="text/babel">
+        var PageHeader = ReactBootstrap.PageHeader;
+
+        var FormGroup = ReactBootstrap.FormGroup;
+        var FormControl = ReactBootstrap.FormControl;
+        var Checkbox = ReactBootstrap.Checkbox;
+
+        var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+        var Button = ReactBootstrap.Button;
+
+        const pageHeaderInstance = (
+          <PageHeader>课程公告</PageHeader>
+        );
+        ReactDOM.render(pageHeaderInstance, $('#header')[0]);
+
+        const formInstance = (
+          <FormGroup controlId="formControlsTextarea">
+          <FormControl componentClass="textarea"/> <Checkbox checked readOnly>
+          删除
+          </Checkbox>
+          </FormGroup>);
+        ReactDOM.render(formInstance, $('#notice')[0]);
+
+        ReactDOM.render(
+        <ButtonToolbar>
+            <Button bsStyle="primary">发布</Button>
+        </ButtonToolbar>,$('#button')[0]
+        );
+    </script>
+
+    <!-- 课件资料导航栏 -->
+    <div id="navs"></div>
+    <script type="text/babel">
+    var Nav = ReactBootstrap.Nav;
+    var NavItem = ReactBootstrap.NavItem;
+    const NavDropdownExample = React.createClass({
+    handleSelect(eventKey) {
+    event.preventDefault();
+    alert(`selected ${eventKey}`);
+  },
+  render() {
+    return (
+      <Nav bsStyle="tabs" activeKey="1" onSelect={this.handleSelect}>
+        <NavItem eventKey="1" href="/home">课件</NavItem>
+        <NavItem eventKey="2" title="Item">资料</NavItem>
+      </Nav>
+    );
+  }
+});
+
+ReactDOM.render(<NavDropdownExample />, $('#navs')[0]);
+    </script>
+
+    <!-- 课件（checkbox删除怎么放到同行右边？） -->
+    <div id="courseware"></div>
+    <script type="text/babel">
+    var ListGroup = ReactBootstrap.ListGroup;
+    var ListGroupItem = ReactBootstrap.ListGroupItem;
+    var Checkbox = ReactBootstrap.Checkbox;
+        const listgroupInstance = (
+        <ListGroup>
+            <ListGroupItem href="#link1">第一章.ppt      2016/9/5<Checkbox checked readOnly>删除</Checkbox></ListGroupItem>
+            <ListGroupItem href="#link2">第二章.ppt      2016/10/5</ListGroupItem>
+            <ListGroupItem href="#link3">第三章.ppt      2016/11/5</ListGroupItem>
+        </ListGroup>
+		);
+
+        ReactDOM.render(listgroupInstance, $('#courseware')[0]);
+    </script>
+    <div class="pull-right">
+        <a class="btn btn-primary" href="{{ site.baseurl }}/aboutPRODUCTS2/">确定</a>
+    </div>
+
+	<!-- 课程界面（按钮怎么置右） -->
+    <div id="homework"></div>
+    <div id="hwLabel"></div>
+    <div id="hwtext1"></div>
+    <div id="hwtext2"></div>
+    <script type="text/babel">
+    	var PageHeader = ReactBootstrap.PageHeader;
+    	var Button = ReactBootstrap.Button;
+    	var FormGroup = ReactBootstrap.FormGroup;
+    	var FormControl = ReactBootstrap.FormControl;
+
+    	const pageHeaderInstance = (
+          <PageHeader>课程作业{' '}<Button type="submit" bsStyle="primary">添加章节</Button></PageHeader>
+        );
+        ReactDOM.render(pageHeaderInstance, $('#homework')[0]);
+
+        ReactDOM.render(<div><h3>第一章 概论</h3></div>, $('#hwLabel')[0]);
+
+		const staticText1 = (
+          <FormGroup>
+      		<FormControl.Static>
+       		第一章测试{' '}<small> 截止时间: 2016/12/30 23:59:59</small>
+      		</FormControl.Static>{' '}<Button type="submit" bsStyle="primary" bsSize="xsmall">前往作业</Button>
+    	  </FormGroup>
+    	);
+		ReactDOM.render(staticText1, $('#hwtext1')[0]);
+
+		const staticText2 = (
+          <FormGroup>
+      		<FormControl.Static>
+       		第二章测试{' '}<small> 截止时间: 2016/12/30 23:59:59</small>
+      		</FormControl.Static>{' '}<Button type="submit" bsStyle="primary" bsSize="xsmall">前往作业</Button>
+    	  </FormGroup>
+    	);
+		ReactDOM.render(staticText2, $('#hwtext2')[0]);
+    </script>
+
+    <!-- 批改界面 -->
+    <div id="correctHeader"></div>
+    <div id="student1"></div>
+    <div id="outputHomework1"></div>
+    <div id="homeworkText1"></div>
+    <div id="mark1"></div>
+    <script type="text/babel">
+    	var PageHeader = ReactBootstrap.PageHeader;
+    	var Button = ReactBootstrap.Button;
+    	var ButtonToolbar = ReactBootstrap.ButtonToolbar;
+    	var FormGroup = ReactBootstrap.FormGroup;
+    	var FormControl = ReactBootstrap.FormControl;
+
+    	const correctHeaderInstance = (
+          <PageHeader>第一章测试</PageHeader>
+        );
+        ReactDOM.render(correctHeaderInstance, $('#correctHeader')[0]);
+
+        ReactDOM.render(<div><h4>3140108888{' '}张三</h4></div>, $('#student1')[0]);
+
+        ReactDOM.render(
+        <ButtonToolbar>
+          <Button bsStyle="primary" bsSize="small">导出作业</Button>
+        </ButtonToolbar>,$('#outputHomework1')[0]
+        );
+
+		const homeworkText1 = (
+          <FormGroup>
+      		<FormControl.Static>
+       		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.
+      		</FormControl.Static>
+    	  </FormGroup>
+    	);
+		ReactDOM.render(homeworkText1, $('#homeworkText1')[0]);
+
+		const inputMarks = (
+  		<FormGroup>
+      	  <FormControl.Static >评分（10）：</FormControl.Static>
+          <FormControl type="text" />
+        	{' '}
+        	<Button type="submit">提交</Button>
+        </FormGroup>
+		);
+		ReactDOM.render(inputMarks, $('#mark1')[0]);
+    </script>
+
+    <!-- 学生作业界面 -->
+    <div id="stHomeworkHeader"></div>
+    <div id="stHomeworkText1"></div>
+    <div id="answer1"></div>
+    <div id="stFile1"></div>
+    <script type="text/babel">
+    	var PageHeader = ReactBootstrap.PageHeader;
+    	var FormGroup = ReactBootstrap.FormGroup;
+    	var FormControl = ReactBootstrap.FormControl;
+
+    	const stHomeworkHeaderInstance = (
+          <PageHeader>第一章测试</PageHeader>
+        );
+        ReactDOM.render(stHomeworkHeaderInstance, $('#stHomeworkHeader')[0]);
+
+		const stHomeworkText1 = (
+          <FormGroup>
+      		<FormControl.Static>
+       		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.
+      		</FormControl.Static>
+    	  </FormGroup>
+    	);
+		ReactDOM.render(stHomeworkText1, $('#stHomeworkText1')[0]);
+
+		const inputAnswer = (
+  		<FormGroup controlId="formControlsTextarea">
+          <FormControl componentClass="textarea" />
+        </FormGroup>
+		);
+		ReactDOM.render(inputAnswer, $('#answer1')[0]);
+		
+		function FieldGroup({ id, ...props }) {
+		  return (
+		    <FormGroup controlId={id}>
+		      <FormControl {...props} />
+		    </FormGroup>
+		  );
+		}
+		const fileSubmit = (
+		<FieldGroup
+      	  id="formControlsFile"
+      	  type="file"
+    	/>
+    	);
+    ReactDOM.render(fileSubmit, $('#stFile1')[0]);
+    </script>
+    <div class="pull-right">
+        <a class="btn btn-primary" href="{{ site.baseurl }}/aboutPRODUCTS2/">提交</a>
+    </div>
+
+    <!-- 作业情况 -->
+    <div id="homeworkConHeader"></div>
+    <div id="conditionLabel"></div>
+    <div id="homeworkCondition"></div>
+    <div id="kclb"></div>
+    <script type="text/babel">
+    var Table = ReactBootstrap.Table;
+    var PageHeader = ReactBootstrap.PageHeader;
+
+      var Tab = ReactBootstrap.Tab;
+      var Row = ReactBootstrap.Row;
+      var Col = ReactBootstrap.Col;
+      var Nav = ReactBootstrap.Nav;
+      var NavItem = ReactBootstrap.NavItem;
+
+    const homeworkConHeader = (
+          <PageHeader>第一章测试</PageHeader>
+        );
+        ReactDOM.render(homeworkConHeader, $('#homeworkConHeader')[0]);
+        ReactDOM.render(<div><h3>完成情况</h3></div>, $('#conditionLabel')[0]);
+
+    const tableInstance = (
+    <Table striped bordered condensed hover>
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>姓名</th>
+        <th>学号</th>
+        <th>专业班级</th>
+        <th>分组</th>
+        <th>完成情况</th>
+        <th>成绩</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><a href="#link1">徐亮</a></td>
+        <td>3140111111</td>
+        <td>软工140X</td>
+        <td>1</td>
+        <td>已提交</td>
+        <td>94</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><a href="#link2">郭珽</a></td>
+        <td>3140222222</td>
+        <td>软工140X</td>
+        <td>1</td>
+        <td>已提交</td>
+        <td>96</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><a href="#link3">赵六</a></td>
+        <td>3140333333</td>
+        <td>软工140X</td>
+        <td>2</td>
+        <td>未提交</td>
+        <td>0</td>
+      </tr>
+    </tbody>
+    </Table>
+	);
+	ReactDOM.render(tableInstance, $('#homeworkCondition')[0]);
+
+    	const tabsInstance = (
+  		<Tab.Container id="left-tabs-example" defaultActiveKey="first">
+    	  <Row className="clearfix">
+        	<Col sm={4}>
+        	  <Nav bsStyle="pills" stacked>
+         	    <NavItem eventKey="first">
+            	课程介绍
+          		</NavItem>
+           	    <NavItem eventKey="second">
+           	    课程公告
+          	    </NavItem>
+          	    <NavItem eventKey="third">
+           	    教学课件
+          	    </NavItem>
+          	    <NavItem eventKey="fourth">
+           	    课程作业
+          	    </NavItem>
+          	    <NavItem eventKey="fifth">
+           	    课程讨论区
+          	    </NavItem>
+        	  </Nav>
+      		</Col>
+      	    <Col sm={8}>
+      		  <Tab.Content animation>
+        		<Tab.Pane eventKey="first">
+        		Tab 1 content
+        		</Tab.Pane>
+        		<Tab.Pane eventKey="second">
+        		Tab 2 content
+        		</Tab.Pane>
+        		<Tab.Pane eventKey="third">
+        		Tab 3 content
+        		</Tab.Pane>
+        		<Tab.Pane eventKey="fourth">
+        		Tab 4 content
+        		</Tab.Pane>
+        		<Tab.Pane eventKey="fifth">
+        		Tab 5 content
+        		</Tab.Pane>
+      		  </Tab.Content>
+      		</Col>
+    	  </Row>
+  		</Tab.Container>
+		);
+
+		ReactDOM.render(tabsInstance, $('#kclb')[0]);
+    </script>
+</body>
+</html>
