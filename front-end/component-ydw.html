@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>component-ydw</title>
+        <meta name="keywords" content=""/>
+        <meta name="description" content=""/>
+        <meta name="viewport" content="width=device-width"/>
+
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+
+        <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+        <script src="http://cdn.bootcss.com/react/15.4.1/react.min.js"></script>
+        <script src="http://cdn.bootcss.com/react/15.4.1/react-dom.min.js"></script>
+        <script src="http://cdn.bootcss.com/react-bootstrap/0.30.7/react-bootstrap.min.js"></script>
+        <script src="browser.min.js"></script>
+
+        <style>
+            table#t01 {
+                width: 100%;
+            }
+
+            table#t01 div{
+                padding: 10px;
+                float: left;
+                width: 20%;
+            }
+
+            table#t02 td{
+                padding: 5px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="homepage-intro" class="container" style="width:70%"></div>
+        <div id="link-exchange" class="container" style="width:70%"></div>
+        <div id="course-system" class="container" style="width:70%"></div>
+        <div id="teacher-intro" class="container" style="width:70%"></div>
+        <div id="file-download" class="container" style="width:70%"></div>
+        <div id="user-dropdown" class="container" style="width:70%"></div>
+        <div id="student-info" class="container" style="width:70%"></div>
+        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+
+        <!--首页介绍-->
+        <script type="text/babel">
+            window.PageHeader = ReactBootstrap.PageHeader;
+            const courseSystem = (
+                <div>
+                    <PageHeader>软件工程</PageHeader>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;浙江大学软件学院前身是浙江大学软件与网络学院，于2001年2月27日在杭州与宁波两地同时挂牌成立，2001年12月成为国家教育部和国家发展计划委员会批准的首批35所国家示范性软件学院之一，同时更名为浙江大学软件学院。<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;浙江大学国家示范性软件学院分别在杭州和宁波办学。杭州办学地点在浙江大学玉泉校区，以培养本科生为主。宁波办学地点在宁波国家高新区，以培养研究生为主。<br/><br/></p>
+                </div>
+            );
+
+            ReactDOM.render(courseSystem, $('#homepage-intro')[0]);
+        </script>
+
+
+        <!--友情链接-->
+        <script type="text/babel">
+            window.PanelGroup = ReactBootstrap.PanelGroup;
+            window.Panel = ReactBootstrap.Panel;
+            class LinkExchange extends React.Component {
+                render() {
+                    return (
+                        <PanelGroup defaultActiveKey="1" accordion>
+                            <Panel header="友情链接" eventKey="1">
+                                {this.props.links}
+                            </Panel>
+                        </PanelGroup>
+                    );
+                }
+            }
+
+            var links = (
+                <table>
+                    <tr>
+                        <td>
+                            <a href="http://zupo.zju.edu.cn" target="_blank"><img src="http://jwbinfosys.zju.edu.cn/images/zupologo.gif" border="0" /></a>
+                        </td>
+                        <td width="10px"></td>
+                        <td>
+                            <a href="http://jwb.zju.edu.cn" target="_blank"><img src="http://jwbinfosys.zju.edu.cn/images/jwblogo.gif" border="0" /></a>
+                        </td>
+                        <td width="10px"></td>
+                        <td>
+                            <a href="http://www.cc98.org/" target="_blank"><img src="http://jwbinfosys.zju.edu.cn/images/cc98logo.gif" border="0" /></a>
+                        </td>
+                    </tr>
+                </table>
+            );
+
+            ReactDOM.render(<LinkExchange links={links}/>, $('#link-exchange')[0]);
+        </script>
+
+
+        <script type="text/babel">
+
+            window.PageHeader = ReactBootstrap.PageHeader;
+
+            /*
+            * @param  data, offset
+            * @return  a row of table
+            */
+
+            class CourseSystem extends React.Component {
+                render() {
+                    var table = [];
+                    var length = this.props.courses.length;
+                    var offset;
+                    for(offset = 0; offset < length; offset++) {
+                        table.push(<div><a href={this.props.courses[offset].url}>
+                            {this.props.courses[offset].title}
+                            </a></div>);
+                    }
+
+                    return (
+                        <div>
+                            <PageHeader>课程体系</PageHeader>
+                            <table id="t01">
+                                <tr><td>{table}</td></tr>
+                            </table>
+                        </div>
+                    );
+                }
+            }
+
+            var courses = [
+                {title: "course1", url: "https://www.baidu.com"},
+                {title: "course2", url: "https://www.baidu.com"},
+                {title: "course3", url: "https://www.baidu.com"},
+                {title: "course4", url: "https://www.baidu.com"},
+                {title: "course5", url: "https://www.baidu.com"},
+                {title: "course6", url: "https://www.baidu.com"},
+                {title: "course7", url: "https://www.baidu.com"},
+                {title: "course8", url: "https://www.baidu.com"},
+                {title: "course9", url: "https://www.baidu.com"}
+            ];
+
+            ReactDOM.render(<CourseSystem courses={courses} />, $('#course-system')[0]);
+
+        </script>
+
+
+
+        <!--教师介绍-->
+        <script type="text/babel">
+
+            window.PageHeader = ReactBootstrap.PageHeader;
+            window.Modal = ReactBootstrap.Modal;
+
+            class MyModal extends React.Component {
+                constructor(props) {
+                    super(props);
+                    this.state = { showModal: false };
+                    this.close = this.close.bind(this);
+                    this.open = this.open.bind(this);
+                }
+
+                close() {
+                    this.setState({ showModal: false });
+                }
+
+                open() {
+                    this.setState({ showModal: true });
+                }
+
+                render() {
+                    return (
+                        <div>
+                            <a onClick={this.open}>{this.props.name}</a>
+
+                            <Modal show={this.state.showModal} onHide={this.close}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>教师信息</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <table id="t02" width="100%">
+                                        <tr>
+                                            <td width="20%">姓名</td>
+                                            <td>{this.props.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="20%">性别</td>
+                                            <td>{this.props.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="20%">联系电话</td>
+                                            <td>{this.props.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="20%">email</td>
+                                            <td>{this.props.name}</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="20%">学院</td>
+                                            <td>{this.props.name}</td>
+                                        </tr>
+                                    </table>
+                                    <hr />
+                                    <p>个人介绍</p>
+                                </Modal.Body>
+                            </Modal>
+                        </div>
+                    );
+                }
+            }
+
+            class TeacherIntro extends React.Component {
+                render() {
+                    var table = [];
+                    var length = this.props.teachers.length;
+                    var offset;
+                    for(offset = 0; offset < length; offset++) {
+                        table.push(<MyModal name={this.props.teachers[offset]}/>);
+                    }
+
+                    return (
+                        <div>
+                            <PageHeader>教师介绍</PageHeader>
+                            <table id="t01">
+                                <tr><td>{table}</td></tr>
+                            </table>
+                        </div>
+                    );
+                }
+            }
+
+            var teachers = [
+            "teacher1","teacher2","teacher3","teacher4","teacher5","teacher6","teacher7","teacher8","teacher9"
+            ];
+
+            ReactDOM.render(<TeacherIntro teachers={teachers} />, $('#teacher-intro')[0]);
+        </script>
+
+
+
+        <!--资源下载-->
+        <script type="text/babel">
+
+            window.PageHeader = ReactBootstrap.PageHeader;
+            window.Table = ReactBootstrap.Table;
+
+            class FileDownload extends React.Component {
+                render() {
+                    var table = [];
+                    var length = this.props.files.length;
+                    var index;
+                    for(index = 0; index < length; index++) {
+                        table.push(
+                            <tr>
+                                <td>{index}</td>
+                                <td>{this.props.files[index].name}</td>
+                                <td>{this.props.files[index].size}</td>
+                                <td>{this.props.files[index].uploader}</td>
+                                <td>{this.props.files[index].time}</td>
+                                <td><a href={this.props.files[index].links}>view</a></td>
+                            </tr>
+                        );
+                    }
+
+                    return (
+                        <div>
+                            <PageHeader>资源下载</PageHeader>
+                                <Table striped bordered hover>
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">#</th>
+                                            <th width="35%">文件名</th>
+                                            <th width="15%">文件大小</th>
+                                            <th width="15%">上传者</th>
+                                            <th width="20%">上传时间</th>
+                                            <th width="10%">预览</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {table}
+                                    </tbody>
+                                </Table>
+                        </div>
+                    );
+                }
+            }
+
+            var files = [
+                {name: "file1", size: "10MB", uploader: "me1", time: "2016-12-15", links: "https://www.baidu.com"},
+                {name: "filename2", size: "20MB", uploader: "me2", time: "2016-12-15", links: "https://www.baidu.com"},
+                {name: "filenamefilename3", size: "30MB", uploader: "me3", time: "2016-12-15", links: "https://www.baidu.com"}
+            ];
+
+            ReactDOM.render(<FileDownload files={files}/>, $('#file-download')[0]);
+
+        </script>
+
+
+        <!--用户下拉-->
+        <script type="text/babel">
+
+            window.DropdownButton = ReactBootstrap.DropdownButton;
+            window.MenuItem = ReactBootstrap.MenuItem;
+
+            class UserDropdown extends React.Component {
+                render() {
+                    var title = "你好，" + this.props.name;
+
+                    return(
+                        <DropdownButton bsStyle="link" title={title} noCaret>
+                            <MenuItem eventKey="1">个人中心</MenuItem>
+                            <MenuItem eventKey="2">修改密码</MenuItem>
+                            <MenuItem eventKey="3">退出</MenuItem>
+                        </DropdownButton>
+                    );
+                }
+            }
+
+            var name = "you";
+
+            ReactDOM.render(<UserDropdown name={name}/>, $('#user-dropdown')[0]);
+
+        </script>
+
+
+        <!--学生信息-->
+        <script type="text/babel">
+
+            window.PageHeader = ReactBootstrap.PageHeader;
+            window.Table = ReactBootstrap.Table;
+            window.DropdownButton = ReactBootstrap.DropdownButton;
+            window.MenuItem = ReactBootstrap.MenuItem;
+
+            class StudentInfo extends React.Component {
+                render() {
+                    var table = [];
+                    var length = this.props.students.length;
+                    var index;
+                    for(index = 0; index < length; index++) {
+                        table.push(
+                            <tr>
+                                <td>{index}</td>
+                                <td>{this.props.students[index].name}</td>
+                                <td>{this.props.students[index].id}</td>
+                                <td>{this.props.students[index].classes}</td>
+                                <td>{this.props.students[index].group}</td>
+                            </tr>
+                        );
+                    }
+
+                    return (
+                        <div>
+                            <PageHeader>学生信息</PageHeader>
+                            <Table striped bordered hover style={{width:"80%", float:"left"}}>
+                                <thead>
+                                    <tr>
+                                        <th width="20%">序号</th>
+                                        <th width="20%">姓名</th>
+                                        <th width="20%">学号</th>
+                                        <th width="20%">专业班级</th>
+                                        <th width="20%">分组</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {table}
+                                </tbody>
+                            </Table>
+                            <div style={{float:"right"}}>
+                                <DropdownButton bsSize="large" bsStyle="link" title="+" noCaret pullRight>
+                                    <MenuItem eventKey="1" href="https://www.baidu.com">单个导入</MenuItem>
+                                    <MenuItem eventKey="2" href="https://www.baidu.com">批量导入</MenuItem>
+                                </DropdownButton>
+                            </div>
+                        </div>
+                    );
+                }
+            }
+
+            var students = [
+                {name: "stu1", id: "12345", classes: "me1", group: "1"},
+                {name: "stu2", id: "23456", classes: "me2", group: "2"},
+                {name: "stu3", id: "34567", classes: "me3", group: "3"}
+            ];
+
+            ReactDOM.render(<StudentInfo students={students}/>, $('#student-info')[0]);
+
+        </script>
+
+    </body>
+</html>
+
