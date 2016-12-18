@@ -1,16 +1,17 @@
-window.Navbar = ReactBootstrap.Navbar;
-window.Nav = ReactBootstrap.Nav;
-window.NavItem = ReactBootstrap.MenuItem;
-window.Well = ReactBootstrap.Well;
-window.Panel = ReactBootstrap.Panel;
-window.FormGroup = ReactBootstrap.FormGroup;
-window.ControlLabel = ReactBootstrap.ControlLabel;
-window.FormControl = ReactBootstrap.FormControl;
-window.Radio = ReactBootstrap.Radio;
-window.Button = ReactBootstrap.Button;
-window.FieldGroup = ReactBootstrap.FieldGroup;
+var Navbar = ReactBootstrap.Navbar;
+var Nav = ReactBootstrap.Nav;
+var NavItem = ReactBootstrap.MenuItem;
+var Well = ReactBootstrap.Well;
+var Panel = ReactBootstrap.Panel;
+var FormGroup = ReactBootstrap.FormGroup;
+var ControlLabel = ReactBootstrap.ControlLabel;
+var FormControl = ReactBootstrap.FormControl;
+var Radio = ReactBootstrap.Radio;
+var Button = ReactBootstrap.Button;
+var FieldGroup = ReactBootstrap.FieldGroup;
 var Label = ReactBootstrap.Label;
 var Table = ReactBootstrap.Table;
+var PageHeader = ReactBootstrap.PageHeader;
 
 window.head = React.createElement("img", { src: "image/logo.gif" });
 
@@ -20,20 +21,7 @@ window.Navigation = React.createClass({
     render: function () {
         return React.createElement(
             Navbar,
-            null,
-            React.createElement(
-                Navbar.Header,
-                null,
-                React.createElement(
-                    Navbar.Brand,
-                    null,
-                    React.createElement(
-                        "a",
-                        { href: "#" },
-                        "\u8BFE\u7A0B\u7F51\u7AD9"
-                    )
-                )
-            ),
+            { inverse: true, collapseOnSelect: true },
             React.createElement(
                 Nav,
                 null,
@@ -66,7 +54,7 @@ window.Login = React.createClass({
                 ),
                 React.createElement(
                     "form",
-                    null,
+                    { action: "/login", method: "post" },
                     React.createElement(
                         FormGroup,
                         { controlId: "formBasicText" },
@@ -75,30 +63,30 @@ window.Login = React.createClass({
                             null,
                             "\u7528\u6237\u540D"
                         ),
-                        React.createElement(FormControl, { name: "1", type: "text", placeholder: "\u8F93\u5165\u7528\u6237\u540D" }),
+                        React.createElement(FormControl, { name: "id", type: "text", placeholder: "\u8F93\u5165\u7528\u6237\u540D" }),
                         React.createElement(
                             ControlLabel,
                             null,
                             "\u5BC6\u7801"
                         ),
-                        React.createElement(FormControl, { name: "2", type: "text", placeholder: "\u8F93\u5165\u5BC6\u7801" })
+                        React.createElement(FormControl, { name: "password", type: "text", placeholder: "\u8F93\u5165\u5BC6\u7801" })
                     ),
                     React.createElement(
                         FormGroup,
                         null,
                         React.createElement(
                             Radio,
-                            { name: "3", value: "1", inline: true, defaultChecked: true },
+                            { name: "collection", value: "teacher", inline: true, defaultChecked: true },
                             "\u6559\u5E08"
                         ),
                         React.createElement(
                             Radio,
-                            { name: "3", value: "2", inline: true },
+                            { name: "collection", value: "student", inline: true },
                             "\u5B66\u751F"
                         ),
                         React.createElement(
                             Radio,
-                            { name: "3", value: "3", inline: true },
+                            { name: "collection", value: "teachingAssistant", inline: true },
                             "\u52A9\u6559"
                         )
                     ),
@@ -106,6 +94,16 @@ window.Login = React.createClass({
                         Button,
                         { type: "submit", bsSize: "large", block: true },
                         "\u767B\u5F55"
+                    )
+                ),
+                React.createElement(
+                    "form",
+                    { action: "/forget/password/id", method: "get" },
+                    React.createElement("br", null),
+                    React.createElement(
+                        Button,
+                        { type: "submit", bsSize: "medium", block: true },
+                        "\u5FD8\u8BB0\u5BC6\u7801"
                     )
                 )
             )
@@ -258,27 +256,110 @@ window.Respond = React.createClass({
 
     render: function () {
         return React.createElement(
-            "div",
+            Well,
             null,
             React.createElement(
-                "form",
-                { method: "", action: this.props.link },
+                "div",
+                null,
                 React.createElement(
-                    FormGroup,
-                    null,
+                    "form",
+                    { method: "", action: this.props.link },
                     React.createElement(
-                        ControlLabel,
+                        FormGroup,
                         null,
-                        "\u56DE\u590D\u5E16\u5B50"
+                        React.createElement(
+                            ControlLabel,
+                            null,
+                            "\u56DE\u590D\u5E16\u5B50"
+                        ),
+                        React.createElement(FormControl, { name: "c", componentClass: "textarea", placeholder: "textarea" })
                     ),
-                    React.createElement(FormControl, { name: "c", componentClass: "textarea", placeholder: "textarea" })
-                ),
-                React.createElement(
-                    Button,
-                    { type: "submit" },
-                    "\u53D1\u8868\u56DE\u590D"
+                    React.createElement(
+                        Button,
+                        { type: "submit" },
+                        "\u53D1\u8868\u56DE\u590D"
+                    )
                 )
             )
         );
     }
 });
+
+window.Introduction = React.createClass({
+    displayName: "Introduction",
+
+    render: function () {
+        return React.createElement(
+            "div",
+            null,
+            React.createElement(
+                PageHeader,
+                null,
+                "\u8F6F\u4EF6\u5DE5\u7A0B"
+            ),
+            React.createElement(
+                "h3",
+                null,
+                "\xA0\xA0\xA0\xA0\xA0\xA0\xA0\xA0\u6D59\u6C5F\u5927\u5B66\u8F6F\u4EF6\u5B66\u9662\u524D\u8EAB\u662F\u6D59\u6C5F\u5927\u5B66\u8F6F\u4EF6\u4E0E\u7F51\u7EDC\u5B66\u9662\uFF0C\u4E8E2001\u5E742\u670827\u65E5\u5728\u676D\u5DDE\u4E0E\u5B81\u6CE2\u4E24\u5730\u540C\u65F6\u6302\u724C\u6210\u7ACB\uFF0C2001\u5E7412\u6708\u6210\u4E3A\u56FD\u5BB6\u6559\u80B2\u90E8\u548C\u56FD\u5BB6\u53D1\u5C55\u8BA1\u5212\u59D4\u5458\u4F1A\u6279\u51C6\u7684\u9996\u627935\u6240\u56FD\u5BB6\u793A\u8303\u6027\u8F6F\u4EF6\u5B66\u9662\u4E4B\u4E00\uFF0C\u540C\u65F6\u66F4\u540D\u4E3A\u6D59\u6C5F\u5927\u5B66\u8F6F\u4EF6\u5B66\u9662\u3002",
+                React.createElement("br", null),
+                "\xA0\xA0\xA0\xA0\xA0\xA0\xA0\xA0\u6D59\u6C5F\u5927\u5B66\u56FD\u5BB6\u793A\u8303\u6027\u8F6F\u4EF6\u5B66\u9662\u5206\u522B\u5728\u676D\u5DDE\u548C\u5B81\u6CE2\u529E\u5B66\u3002\u676D\u5DDE\u529E\u5B66\u5730\u70B9\u5728\u6D59\u6C5F\u5927\u5B66\u7389\u6CC9\u6821\u533A\uFF0C\u4EE5\u57F9\u517B\u672C\u79D1\u751F\u4E3A\u4E3B\u3002\u5B81\u6CE2\u529E\u5B66\u5730\u70B9\u5728\u5B81\u6CE2\u56FD\u5BB6\u9AD8\u65B0\u533A\uFF0C\u4EE5\u57F9\u517B\u7814\u7A76\u751F\u4E3A\u4E3B\u3002",
+                React.createElement("br", null),
+                React.createElement("br", null)
+            )
+        );
+    }
+});
+
+window.PanelGroup = ReactBootstrap.PanelGroup;
+window.Panel = ReactBootstrap.Panel;
+class Friend extends React.Component {
+    render() {
+        return React.createElement(
+            PanelGroup,
+            { defaultActiveKey: "1", accordion: true },
+            React.createElement(
+                Panel,
+                { header: "\u53CB\u60C5\u94FE\u63A5", eventKey: "1" },
+                this.props.links
+            )
+        );
+    }
+}
+
+window.friendLinks = React.createElement(
+    "table",
+    null,
+    React.createElement(
+        "tr",
+        null,
+        React.createElement(
+            "td",
+            null,
+            React.createElement(
+                "a",
+                { href: "http://zupo.zju.edu.cn", target: "_blank" },
+                React.createElement("img", { src: "http://jwbinfosys.zju.edu.cn/images/zupologo.gif", border: "0" })
+            )
+        ),
+        React.createElement("td", { width: "10px" }),
+        React.createElement(
+            "td",
+            null,
+            React.createElement(
+                "a",
+                { href: "http://jwb.zju.edu.cn", target: "_blank" },
+                React.createElement("img", { src: "http://jwbinfosys.zju.edu.cn/images/jwblogo.gif", border: "0" })
+            )
+        ),
+        React.createElement("td", { width: "10px" }),
+        React.createElement(
+            "td",
+            null,
+            React.createElement(
+                "a",
+                { href: "http://www.cc98.org/", target: "_blank" },
+                React.createElement("img", { src: "http://jwbinfosys.zju.edu.cn/images/cc98logo.gif", border: "0" })
+            )
+        )
+    )
+);
